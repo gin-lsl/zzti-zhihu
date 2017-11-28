@@ -1,0 +1,25 @@
+{
+  "name": "zzti-zhihu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gin-lsl/zzti-zhihu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gin-lsl/zzti-zhihu/issues"
+  },
+  "homepage": "https://github.com/gin-lsl/zzti-zhihu#readme",
+  "dependencies": {
+    "debug": "^3.1.0",
+    "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.3.0"
+  }
+}

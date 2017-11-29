@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
+    "tsc": "tsc -w",
+    "start": "node ./dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,15 @@
     "debug": "^3.1.0",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
-    "koa-router": "^7.3.0"
+    "koa-router": "^7.3.0",
+    "tslib": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.30",
+    "@types/koa": "^2.0.41",
+    "@types/koa-bodyparser": "^3.0.26",
+    "@types/koa-router": "^7.0.26",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
   }
 }

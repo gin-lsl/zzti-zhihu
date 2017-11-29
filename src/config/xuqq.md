@@ -1,0 +1,4 @@
+项目主要完成一个包括前端和后台的问答网站。
+前端使用Angular开发，开发语言为TypeScript，使用Rxjs进行状态管理。
+后台主要提供REST接口，使用Node.js开发，开发语言为 JavaScript。
+使用的Web框架为Koa2，使用的数据库为MongoDB，搜索服务有ElasticSearch提供，具体来说是使用mongo-connector模块同步MongoDB的数据到ElasticSearch中。使用Redis或直接用MongoDB保存Session信息。

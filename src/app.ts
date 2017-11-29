@@ -1,8 +1,10 @@
 import * as Debug from 'debug';
-const debug = Debug('zzti-zhihu:app');
 import * as Koa from 'koa';
-import * as Router from 'koa-router';
 import * as bodyParser from 'koa-bodyparser';
+import * as Router from 'koa-router';
+import routes from './routes';
+// import userRouter from './routes/user';
+const debug = Debug('zzti-zhihu:app');
 
 const app = new Koa();
 const router = new Router();
@@ -13,11 +15,16 @@ app.use(async (ctx, next) => {
   debug('进入处理');
   debug('body: %O', ctx.request.body);
   await next();
-  ctx.body = {
-    success: true,
-    msg: '成功'
-  };
+  // ctx.body = {
+  //   success: true,
+  //   msg: '成功'
+  // };
 });
+
+// router.use('/users', userRouter.routes());
+
+// app.use(router.routes());
+app.use(routes.routes());
 
 app.listen(3000, () => {
   console.log('server listening 3000');

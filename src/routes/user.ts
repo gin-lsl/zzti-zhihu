@@ -1,6 +1,7 @@
 import { Context } from 'koa';
 import * as Debug from 'debug';
 import * as Router from 'koa-router';
+import { UserController } from '../controllers/UserController';
 const router = new Router();
 const debug = Debug('zzti-zhihu:routes:user');
 
@@ -20,6 +21,7 @@ const index = async (ctx: Context, next: () => Promise<any>) => {
  * @param next 中间件
  */
 const login = async (ctx: Context, next: () => Promise<any>) => {
+  
   await next();
 }
 
@@ -34,7 +36,7 @@ const logon = async (ctx: Context, next: () => Promise<any>) => {
 }
 
 router.get('/', index);
-router.post('/login', login);
+router.post('/login', UserController.login);
 router.post('/logon', logon);
 
 export default router;

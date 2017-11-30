@@ -3,8 +3,10 @@ import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as Router from 'koa-router';
 import routes from './routes';
-// import userRouter from './routes/user';
+import { mongo } from './config/MongoConnection'
 const debug = Debug('zzti-zhihu:app');
+
+mongo();
 
 const app = new Koa();
 const router = new Router();

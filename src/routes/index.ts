@@ -1,6 +1,6 @@
 import * as Router from 'koa-router';
-import users from './user';
-import homes from './home';
+import users from './User';
+import homes from './Home';
 
 const router = new Router();
 

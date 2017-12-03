@@ -8,7 +8,7 @@ const connConfig = {
   production: {
     connectionString: `mongodb://${env.url}`
   }
-}
+};
 
 export class MongoConfig {
 
@@ -19,12 +19,12 @@ export class MongoConfig {
 
   /**
    * 获取Mongo连接信息
-   * @param env 开发环境
+   * @param envMode 开发环境
    */
-  public static connStr(env: 'development' | 'production' = 'development'): string {
-    if (env !== 'development') {
-      env = 'development';
+  public static connStr(envMode: 'development' | 'production' = 'development'): string {
+    if (envMode !== 'development') {
+      envMode = 'development';
     }
-    return connConfig[env].connectionString;
+    return connConfig[envMode].connectionString;
   }
 }

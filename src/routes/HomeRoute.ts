@@ -32,8 +32,8 @@ const index = async (ctx: Context, next: () => Promise<any>) => {
         }
       }
     ]
-  }
-}
+  };
+};
 
 router.get('/', index);
 

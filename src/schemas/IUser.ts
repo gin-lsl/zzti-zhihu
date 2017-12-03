@@ -1,9 +1,11 @@
 import * as mongoose from 'mongoose';
 
+
+
 /**
- * User接口
+ * UserDocument 接口
  */
-export interface IUser extends mongoose.Document {
+export interface IUserDocument extends mongoose.Document {
   /**
    * 邮箱
    */
@@ -68,4 +70,4 @@ export interface IUser extends mongoose.Document {
    * 加盐值
    */
   salt: String;
-};
+}

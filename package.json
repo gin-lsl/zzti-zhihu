@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "rm": "rm -r dist",
-    "tsc": "npm run rm && tsc",
+    "tsc": "tsc --watch",
     "start": "node ./dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/gin-lsl/zzti-zhihu.git"
   },
-  "author": "",
+  "author": "", 
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gin-lsl/zzti-zhihu/issues"

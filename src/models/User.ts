@@ -1,6 +1,6 @@
 import { model, Schema, Document, Model } from 'mongoose';
 import { ObjectId } from 'bson';
-import { IUser } from '../schemas/IUser';
+import { IUserDocument } from '../schemas/IUser';
 
 /**
  * User模式
@@ -76,4 +76,4 @@ const UserSchema = new Schema({
 /**
  * User模型
  */
-export const UserModel: Model<IUser> = model<IUser>('User', UserSchema);
+export const UserModel: Model<IUserDocument> = model<IUserDocument>('User', UserSchema);

@@ -8,6 +8,9 @@
     "package-lock.json": true,
     ".gitignore": true,
     ".editorconfig": true,
-    "LICENSE": true
+    "LICENSE": true,
+    // "tsconfig.json": true,
+    "tslint.json": true,
+    "README.md": true
   }
 }

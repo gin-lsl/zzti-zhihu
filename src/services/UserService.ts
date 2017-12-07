@@ -50,21 +50,21 @@ export class UserService {
   }
 
   /**
-   * 检查邮箱是否已被注册
+   * 检查邮箱是否已被注册, 返回true表示已注册
    *
    * @param email 邮箱
    */
   public static async checkEmailExist(email: string): Promise<boolean> {
     debug('UserService#checkEmailExist: ', email);
-    return await UserModel.findOne({ email: email }) === null;
+    return await UserModel.findOne({ email: email }) !== null;
   }
 
   /**
-   * 检查用户名是否已存在
+   * 检查用户名是否已存在，返回true表示用户名已存在
    *
    * @param username 用户名
    */
   public static async checkUsernameExist(username: string): Promise<boolean> {
-    return await UserModel.findOne({ username: username }) === null;
+    return await UserModel.findOne({ username: username }) !== null;
   }
 }

@@ -32,4 +32,4 @@ export const mongo = () => {
       debug('没有环境变量');
       throw new Error('请先配置环境变量 env ');
   }
-}
+};

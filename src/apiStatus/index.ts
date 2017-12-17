@@ -1,2 +1,2 @@
 export * from './ErrorCode.enum';
-export * from './ErrorCodeUtil';
+export * from './RequestResultUtil';

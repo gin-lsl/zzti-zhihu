@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { createJWT } from '../middleware/index';
-import { ErrorCodeUtil, ErrorCodeEnum } from '../apiStatus/index';
+import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 const debug = Debug('zzti-zhihu:controller:user');
 
 /**
@@ -20,15 +20,19 @@ export class UserController {
   public static async login(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('进入UserController:login');
     const { email, password } = ctx.request.body;
-    const _body = {};
+    let _body;
     try {
       const loginRes = await UserService.login(email, password);
-      debug('UserService:login 方法调用完毕: ', loginRes);
-      const _jwt = await createJWT({ uid: 'ginlsl', nam: 'ginlsl' }, 'asdfasdfasdf');
-      ctx.body = ErrorCodeUtil.createSuccess({ access_token: _jwt });
+      if (loginRes.success) {
+        const access_token = await createJWT({ uid: 'ginlsl', nam: 'ginlsl' }, 'asdfasdfasdf');
+        _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
+      } else {
+        _body = loginRes;
+      }
     } catch (e) {
-      ctx.body = ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
+      _body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
     }
+    ctx.body = _body;
   }
 
   /**

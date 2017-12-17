@@ -3,7 +3,7 @@ import { UserModel } from '../models/User';
 import { UserProxy } from '../proxy/UserProxy';
 import { IUserDocument } from '../schemas/IUser';
 import { IServiceResult } from '../interfaces/index';
-import { ErrorCodeEnum, ErrorCodeUtil } from '../apiStatus/index';
+import { ErrorCodeEnum, RequestResultUtil } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
 const debug = Debug('zzti-zhihu:service:user');
 
@@ -19,21 +19,14 @@ export class UserService {
    * @param password 密码
    */
   public static async login(email: string, password: string): Promise<IServiceResult<UserDTO>> {
-    debug('email: ', email, 'password: ', password);
-    const newUser = UserProxy.createUser(email, password);
-    debug('newUser: ', newUser);
     if (!(email && password)) {
-      return ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
+      return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
     }
-    const findOneUser = await UserModel.findOne({
-      email: email,
-      password: password
-    });
-    debug('findOneUser: ', findOneUser);
-    if (email === password) {
-      return ErrorCodeUtil.createSuccess<UserDTO>({ email: email, username: findOneUser.username });
+    const findOneUser = await UserProxy.findByEmailAndPassword(email, password);
+    if (findOneUser) {
+      return RequestResultUtil.createSuccess<UserDTO>({ email: email, username: findOneUser.username });
     }
-    return ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
+    return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
   }
 
   /**

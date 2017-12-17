@@ -2,9 +2,9 @@ import { IServiceResult } from "../interfaces/index";
 import { ErrorCodeEnum } from "./ErrorCode.enum";
 
 /**
- * 消息代码方法
+ * 请求结果工具类
  */
-export class ErrorCodeUtil {
+export class RequestResultUtil {
 
   /**
    * 返回一个错误数据

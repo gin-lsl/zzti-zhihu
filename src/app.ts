@@ -20,15 +20,9 @@ app.use(cors);
 
 app.use(bodyParser());
 
-app.use(async (ctx, next) => {
-  debug('进入处理');
-  debug('body: %O', ctx.request.body);
-  await next();
-  // ctx.body = {
-  //   success: true,
-  //   msg: '成功'
-  // };
-});
+// app.use(async (ctx, next) => {
+//   await next();
+// });
 
 // router.use('/users', userRouter.routes());
 

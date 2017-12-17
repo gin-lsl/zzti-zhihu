@@ -9,22 +9,22 @@ export interface IUserDocument extends mongoose.Document {
   /**
    * 邮箱
    */
-  email: String;
+  email: string;
 
   /**
    * 用户名
    */
-  username: String;
+  username: string;
 
   /**
    * 密码
    */
-  password: String;
+  password: string;
 
   /**
    * 性别
    */
-  gender: String;
+  gender: string;
 
   /**
    * 等级
@@ -34,12 +34,12 @@ export interface IUserDocument extends mongoose.Document {
   /**
    * 个人简介
    */
-  profile: String;
+  profile: string;
 
   /**
    * 头像
    */
-  avatar: String;
+  avatar: string;
 
   /**
    * 注册时间
@@ -69,5 +69,5 @@ export interface IUserDocument extends mongoose.Document {
   /**
    * 加盐值
    */
-  salt: String;
+  salt: string;
 }

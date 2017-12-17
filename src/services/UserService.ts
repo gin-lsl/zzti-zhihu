@@ -2,6 +2,9 @@ import * as Debug from 'debug';
 import { UserModel } from '../models/User';
 import { UserProxy } from '../proxy/UserProxy';
 import { IUserDocument } from '../schemas/IUser';
+import { IServiceResult } from '../interfaces/index';
+import { ErrorCodeEnum, ErrorCodeUtil } from '../apiStatus/index';
+import { UserDTO } from '../dto/index';
 const debug = Debug('zzti-zhihu:service:user');
 
 /**
@@ -15,12 +18,12 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async login(email: string, password: string): Promise<boolean | string> {
+  public static async login(email: string, password: string): Promise<IServiceResult<UserDTO>> {
     debug('email: ', email, 'password: ', password);
     const newUser = UserProxy.createUser(email, password);
     debug('newUser: ', newUser);
     if (!(email && password)) {
-      return '请输入用户名和密码';
+      return ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
     }
     const findOneUser = await UserModel.findOne({
       email: email,
@@ -28,9 +31,9 @@ export class UserService {
     });
     debug('findOneUser: ', findOneUser);
     if (email === password) {
-      return true;
+      return ErrorCodeUtil.createSuccess<UserDTO>({ email: email, username: findOneUser.username });
     }
-    return '用户名或密码不正确';
+    return ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
   }
 
   /**

@@ -6,16 +6,19 @@ import routes from './routes';
 import * as Cors from '@koa/cors';
 import { mongo } from './config/MongoConnection';
 const debug = Debug('zzti-zhihu:app');
-const cors = Cors();
+const cors = Cors({
+  allowHeaders: '*',
+  allowMethods: '*'
+});
 
 mongo();
 
 const app = new Koa();
 const router = new Router();
 
-app.use(bodyParser());
-
 app.use(cors);
+
+app.use(bodyParser());
 
 app.use(async (ctx, next) => {
   debug('进入处理');

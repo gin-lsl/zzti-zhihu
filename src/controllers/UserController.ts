@@ -1,6 +1,9 @@
 import { Context } from 'koa';
+import { sign } from 'jsonwebtoken';
 import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
+import { createJWT } from '../middleware/index';
+import { ErrorCodeUtil, ErrorCodeEnum } from '../apiStatus/index';
 const debug = Debug('zzti-zhihu:controller:user');
 
 /**
@@ -15,12 +18,17 @@ export class UserController {
    * @param next next
    */
   public static async login(ctx: Context, next: () => Promise<any>): Promise<any> {
+    debug('进入UserController:login');
     const { email, password } = ctx.request.body;
-    const loginRes = await UserService.login(email, password);
-    ctx.body = {
-      success: loginRes === true,
-      msg: loginRes === true ? '登录成功' : loginRes
-    };
+    const _body = {};
+    try {
+      const loginRes = await UserService.login(email, password);
+      debug('UserService:login 方法调用完毕: ', loginRes);
+      const _jwt = await createJWT({ uid: 'ginlsl', nam: 'ginlsl' }, 'asdfasdfasdf');
+      ctx.body = ErrorCodeUtil.createSuccess({ access_token: _jwt });
+    } catch (e) {
+      ctx.body = ErrorCodeUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
+    }
   }
 
   /**

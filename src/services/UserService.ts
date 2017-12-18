@@ -26,7 +26,7 @@ export class UserService {
     if (findOneUser) {
       return RequestResultUtil.createSuccess<UserDTO>({ email: email, username: findOneUser.username });
     }
-    return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__UNDEFINED);
+    return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
   }
 
   /**

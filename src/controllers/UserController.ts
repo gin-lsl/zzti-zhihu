@@ -27,6 +27,7 @@ export class UserController {
         const access_token = await createJWT({ uid: 'ginlsl', nam: 'ginlsl' }, 'asdfasdfasdf');
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
       } else {
+        ctx.status = 401;
         _body = loginRes;
       }
     } catch (e) {

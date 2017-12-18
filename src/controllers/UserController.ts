@@ -4,6 +4,7 @@ import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { createJWT } from '../middleware/index';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
+import { AppConfig } from '../config/index';
 const debug = Debug('zzti-zhihu:controller:user');
 
 /**
@@ -24,7 +25,8 @@ export class UserController {
     try {
       const loginRes = await UserService.login(email, password);
       if (loginRes.success) {
-        const access_token = await createJWT({ uid: 'ginlsl', nam: 'ginlsl' }, 'asdfasdfasdf');
+        const access_token = await createJWT({ eml: loginRes.successResult.email, nam: loginRes.successResult.username }
+          , AppConfig.JWT_Secret);
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
       } else {
         ctx.status = 401;

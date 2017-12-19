@@ -36,6 +36,8 @@ const logon = async (ctx: Context, next: () => Promise<any>) => {
 };
 
 router.get('/', index);
+router.get('/testjwt', UserController.verifyJwt);
+
 router.post('/login', UserController.login);
 router.post('/logon', UserController.checkEmailCanUse, UserController.logon);
 

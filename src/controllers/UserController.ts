@@ -4,7 +4,7 @@ import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { createJWT } from '../middleware/index';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
-import { AppConfig } from '../config/index';
+
 const debug = Debug('zzti-zhihu:controller:user');
 
 /**
@@ -25,8 +25,7 @@ export class UserController {
     try {
       const loginRes = await UserService.login(email, password);
       if (loginRes.success) {
-        const access_token = await createJWT({ eml: loginRes.successResult.email, nam: loginRes.successResult.username }
-          , AppConfig.JWT_Secret);
+        const access_token = await createJWT({ eml: loginRes.successResult.email, nam: loginRes.successResult.username });
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
       } else {
         ctx.status = 401;
@@ -71,5 +70,17 @@ export class UserController {
       };
     }
     await next();
+  }
+
+  /**
+   * 校驗JWT
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async verifyJwt(ctx: Context, next: () => Promise<any>): Promise<any> {
+    const _authorization1 = ctx.get('Authorization');
+    debug('_authorization1: ', _authorization1);
+    return ctx.body = { _authorization1 };
   }
 }

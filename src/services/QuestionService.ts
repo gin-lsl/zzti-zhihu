@@ -1,5 +1,9 @@
 import { IQuestionDocument } from "../schemas/index";
 import { QuestionModel } from "../models/index";
+import * as Debug from 'debug';
+import { Question, IQuestion } from "../entities/index";
+
+const debug = Debug('zzti-zhihu:service:question');
 
 /**
  * QuestionService
@@ -18,4 +22,19 @@ export class QuestionService {
     const question = new QuestionModel({ title, description });
     return question.save();
   }
+
+  /**
+   * 收藏问题
+   *
+   * @param questionId 问题id
+   * @param userId 用户id
+   */
+  public static async collect(questionId: string, userId): Promise<any> {
+    const question = await QuestionModel.findById(questionId);
+    if (question) {
+      const qu: IQuestion = new Question();
+    }
+    return question;
+  }
+
 }

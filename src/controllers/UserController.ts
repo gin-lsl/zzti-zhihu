@@ -97,6 +97,7 @@ export class UserController {
       debug('can: ', can);
       await next();
     } catch (e) {
+      debug('校验错误: ', e);
       ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
   }

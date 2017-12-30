@@ -1,19 +1,11 @@
 import { Document } from "mongoose";
+import { IQuestion } from "../entities/index";
 
 /**
  * IQuestionDocument 接口
  *
  * @author lsl
  */
-export interface IQuestionDocument extends Document {
+export interface IQuestionDocument extends Document, IQuestion {
 
-  /**
-   * 标题
-   */
-  title: string;
-
-  /**
-   * 描述
-   */
-  description: string;
 }

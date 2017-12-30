@@ -1,3 +1,5 @@
+import { SchemaDefinition } from "mongoose";
+
 /**
  * IQuestion 接口
  *
@@ -14,6 +16,11 @@ export interface IQuestion {
    * 描述
    */
   description: string;
+
+  /**
+   * 收藏此问题的用户id
+   */
+  collectUsersId: Array<string>;
 }
 
 /**
@@ -22,14 +29,18 @@ export interface IQuestion {
  * @author lsl
  */
 export class Question implements IQuestion {
-
-  /**
-   * 标题
-   */
   title: string;
+  description: string;
+  collectUsersId: string[];
 
   /**
-   * 描述
+   * 生成mongoose模式定义对象
    */
-  description: string;
+  static createSchemaDefinition(): SchemaDefinition {
+    return {
+      title: String,
+      description: String,
+      collectUsersId: [String]
+    };
+  }
 }

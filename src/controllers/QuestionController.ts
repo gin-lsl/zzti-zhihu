@@ -25,4 +25,18 @@ export class QuestionController {
     const postRes = await QuestionService.postQuestion(title, description);
     ctx.body = RequestResultUtil.createSuccess<IQuestion>(postRes);
   }
+
+  /**
+   * 收藏问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async collect(ctx: Context, next: () => Promise<any>): Promise<any> {
+    debug('收藏问题');
+    const { qid } = ctx.request.body;
+    const { uid } = ctx.state;
+    const collectRes = await QuestionService.collect(qid, uid);
+    ctx.body = collectRes;
+  }
 }

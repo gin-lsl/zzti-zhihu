@@ -11,7 +11,7 @@ export enum ErrorCodeEnum {
   /**
    * 未知原因导致错误
    */
-  ERROR_UNDEFINED,
+  UNDEFINED_ERROR,
 
   //
   // 登录
@@ -65,5 +65,20 @@ export enum ErrorCodeEnum {
    * 密码错误
    */
   LOGON_ERROR__PASSWORD_ERROR,
+
+  /**
+   * 没有权限
+   */
+  AUTHORIZATION,
+
+  /**
+   * 未知用户
+   */
+  UNKNOWN_USER,
+
+  /**
+   * 不能对自己执行此操作
+   */
+  CANNOT_DO_FOR_SELF,
 
 }

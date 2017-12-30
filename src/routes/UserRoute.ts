@@ -36,9 +36,13 @@ const logon = async (ctx: Context, next: () => Promise<any>) => {
 };
 
 router.get('/', index);
-router.get('/testjwt', UserController.verifyJwt);
+router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
+  ctx.body = ctx.state;
+});
 
 router.post('/login', UserController.login);
 router.post('/logon', UserController.checkEmailCanUse, UserController.logon);
+router.post('/follow', UserController.verifyJwt, UserController.follow);
+router.post('/cancel-follow', UserController.verifyJwt, UserController.cancelFollow);
 
 export default router;

@@ -1,6 +1,6 @@
 import { model, Schema, Document, Model } from 'mongoose';
 import { ObjectId } from 'bson';
-import { IUserDocument } from '../schemas/IUser';
+import { IUserDocument } from '../schemas/IUserDocument';
 
 /**
  * User模式
@@ -55,17 +55,17 @@ const UserSchema = new Schema({
   /**
    * 关注他的
    */
-  followHim: [Schema.Types.ObjectId],
+  followHim: [String],
 
   /**
    * 他关注的
    */
-  hesFollow: [Schema.Types.ObjectId],
+  hesFollow: [String],
 
   /**
    * 他收藏的
    */
-  collections: [Schema.Types.ObjectId],
+  collections: [String],
 
   /**
    * 加盐值

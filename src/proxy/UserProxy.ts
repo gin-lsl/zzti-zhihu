@@ -1,5 +1,5 @@
-import { IUserDocument } from "../schemas/IUser";
-import { UserModel } from "../models/User";
+import { IUserDocument } from "../schemas/IUserDocument";
+import { UserModel } from "../models/UserModel";
 
 /**
  * User方法代理

@@ -80,14 +80,14 @@ export class UserService {
     debug('打印已关注用户列表: ', currUser.hesFollow, ', 要关注的用户: ', toUser.id);
     if (currUser.hesFollow.find(p => p === toUser.id)) {
       debug('判断是否已存在');
-      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR, '已经关注了对方, 请勿重复关注');
+      return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
       debug('更新关注用户列表');
       currUser.hesFollow.push(toUser.id);
       toUser.followHim.push(currUser.id);
-      currUser.save();
-      toUser.save();
+      await currUser.save();
+      await toUser.save();
       return RequestResultUtil.createSuccess();
     } catch (e) {
       debug('保存出错: ', e);
@@ -101,7 +101,7 @@ export class UserService {
    * @param currUserId 当前用户的id
    * @param toUserId 要关注的用户的id
    */
-  public static async cancelFollow(currUserId: string, toUserId: string): Promise<any> {
+  public static async cancelFollow(currUserId: string, toUserId: string): Promise<void> {
     await UserModel.findByIdAndUpdate(currUserId, { $pull: { hesFollow: toUserId } });
     await UserModel.findByIdAndUpdate(toUserId, { $pull: { followHim: currUserId } });
   }

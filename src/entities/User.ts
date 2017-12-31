@@ -66,7 +66,7 @@ export interface IUser {
   /**
    * 他收藏的
    */
-  collections: Array<string>;
+  collectionQuestions: Array<string>;
 
   /**
    * 加盐值
@@ -92,7 +92,7 @@ export class User implements IUser {
   lastLoginTime: Date;
   followHim: string[];
   hesFollow: string[];
-  collections: string[];
+  collectionQuestions: string[];
   salt: string;
 
   /**
@@ -111,7 +111,7 @@ export class User implements IUser {
       lastLoginTime: Date,
       followHim: [String],
       hesFollow: [String],
-      collections: [String],
+      collectionQuestions: [String],
       salt: String,
     };
   }

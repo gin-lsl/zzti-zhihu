@@ -87,13 +87,12 @@ export class UserController {
     const _authorization1 = ctx.get('Authorization');
     debug('_authorization1: ', _authorization1);
     if (!_authorization1) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
-      return;
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
     let can;
     try {
       can = await verifyJWT(_authorization1);
-      ctx.state = can;
+      ctx.state.currentUser = can;
       debug('can: ', can);
       await next();
     } catch (e) {
@@ -110,34 +109,37 @@ export class UserController {
    */
   public static async follow(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('关注用户');
-    const { id } = ctx.request.body;
-    const { uid } = ctx.state;
+    const { id } = ctx.params;
+    const { uid } = ctx.state.currentUser;
     if (!id) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
-      return;
-    }
-    if (!uid) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
-      return;
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
     if (id === uid) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_DO_FOR_SELF);
-      return;
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_DO_FOR_SELF);
     }
     const followRes = await UserService.follow(uid, id);
     debug('followRes: ', followRes);
-    ctx.body = followRes;
+    return ctx.body = followRes;
   }
 
+  /**
+   * 取消关注用户
+   *
+   * @param ctx ctx
+   * @param next next
+   */
   public static async cancelFollow(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('取消关注');
-    const { id } = ctx.request.body;
-    const { uid } = ctx.state;
+    const { id } = ctx.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
     try {
       await UserService.cancelFollow(uid, id);
-      ctx.body = RequestResultUtil.createSuccess();
+      return ctx.body = RequestResultUtil.createSuccess();
     } catch (e) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }
   }
 }

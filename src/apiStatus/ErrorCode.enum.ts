@@ -81,4 +81,14 @@ export enum ErrorCodeEnum {
    */
   CANNOT_DO_FOR_SELF,
 
+  /**
+   * 找不到目标
+   */
+  CANNOT_FOUND_TARGET,
+
+  /**
+   * 操作重复
+   */
+  OPERATION_DUPLICATION,
+
 }

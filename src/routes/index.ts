@@ -8,7 +8,7 @@ const router = new Router();
 
 router.use('/users', UserRoute.routes());
 router.use('/topics', TopicRoute.routes());
-router.use('/question', QuestionRoute.routes());
+router.use('/questions', QuestionRoute.routes());
 router.use('/', HomeRoute.routes());
 
 export default router;

@@ -47,9 +47,14 @@ export enum ErrorCodeEnum {
   LOGON_ERROR__UNDEFINED,
 
   /**
+   * 没有提供邮箱或密码
+   */
+  LOGON_ERROR__NO_EMAIL_OR_PASSWORD,
+
+  /**
    * 缺少邮箱
    */
-  LOGON_ERROR__EMAIL_REQUIRE,
+  LOGON_ERROR__NO_EMAIL,
 
   /**
    * EMAIL(邮箱)已存在
@@ -65,6 +70,11 @@ export enum ErrorCodeEnum {
    * 密码错误
    */
   LOGON_ERROR__PASSWORD_ERROR,
+
+  /**
+   * 密码长度不够
+   */
+  LOGIN_ERROR__PASSWORD_TOO_SHORT,
 
   /**
    * 没有权限

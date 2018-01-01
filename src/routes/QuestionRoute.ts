@@ -4,8 +4,8 @@ import { UserController } from '../controllers/UserController';
 
 const router = new Router();
 
-router.get('/collect/:qid', UserController.verifyJwt, QuestionController.collect);
-router.get('/cancel-collect/:qid', UserController.verifyJwt, QuestionController.cancelCollect);
+router.get('/collect/:id', UserController.verifyJwt, QuestionController.collect);
+router.get('/cancel-collect/:id', UserController.verifyJwt, QuestionController.cancelCollect);
 router.get('/:id', QuestionController.getById);
 router.get('/', QuestionController.getAll);
 

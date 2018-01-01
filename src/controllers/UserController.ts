@@ -23,6 +23,9 @@ export class UserController {
     debug('进入UserController:login');
     const { email, password } = ctx.request.body;
     let _body;
+    if ((email == null || email === '') || (password == null || password === '')) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR, '邮箱或密码不能为空');
+    }
     try {
       const loginRes = await UserService.login(email, password);
       if (loginRes.success) {
@@ -51,6 +54,12 @@ export class UserController {
   public static async logon(ctx: Context, next: () => Promise<any>): Promise<any> {
     const { email, password } = ctx.request.body;
     debug('注册请求: email: %s, password: %s', email, password);
+    if ((email == null || email === '') || (password == null || password === '')) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__NO_EMAIL, '邮箱或密码不能为空');
+    }
+    if (password.length < 6) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__PASSWORD_ERROR, '密码长短不能小于6位');
+    }
     const logonRes = await UserService.logon(email, password);
     ctx.body = {
       res: logonRes

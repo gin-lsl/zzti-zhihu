@@ -57,7 +57,7 @@ export class QuestionController {
       return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     try {
-      await QuestionService.cancelCollect(qid, uid);
+      await QuestionService.cancelCollect(id, uid);
       ctx.body = RequestResultUtil.createSuccess();
     } catch (error) {
       ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);

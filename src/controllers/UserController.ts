@@ -5,6 +5,7 @@ import * as Debug from 'debug';
 import { createJWT, verifyJWT } from '../middleware/index';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
+import { RegexTools, StringUtils } from '../utils/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -52,23 +53,47 @@ export class UserController {
    * @param next next
    */
   public static async logon(ctx: Context, next: () => Promise<any>): Promise<any> {
-    const { email, password } = ctx.request.body;
-    debug('注册请求: email: %s, password: %s', email, password);
-    if ((email == null || email === '') || (password == null || password === '')) {
-      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__NO_EMAIL, '邮箱或密码不能为空');
+    const { email, password, passwordRepeat } = ctx.request.body;
+    debug('注册请求: email: %s, password: %s, passwordRepeat: %s', email, password, passwordRepeat);
+    // 参数为空
+    if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password)) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__NO_EMAIL_OR_PASSWORD, '邮箱或密码不能为空');
     }
+    // 邮箱不合法
+    if (!RegexTools.validEmail(email)) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_ILLEGAL);
+    }
+    // 密码太短
     if (password.length < 6) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__PASSWORD_ERROR, '密码长短不能小于6位');
     }
+    // 密码太简单
+    if (RegexTools.pureNumber(password)) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '密码不能为纯数字');
+    }
+    // 两次输入的密码不一致
+    if (password !== passwordRepeat) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '两次输入的密码不一致');
+    }
+    // 邮箱已存在
+    const emailExist = await UserService.checkEmailExist(email);
+    if (emailExist) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST);
+    }
+    // 注册逻辑
     const logonRes = await UserService.logon(email, password);
-    ctx.body = {
-      res: logonRes
-    };
+    const access_token = await createJWT({
+      uid: logonRes.id,
+      eml: logonRes.email,
+      nam: logonRes.username
+    });
+    ctx.body = RequestResultUtil.createSuccess(access_token);
   }
 
   /**
    * 检查邮箱是否已存在
    *
+   * @deprecated 暂时无用
    * @param ctx ctx
    * @param next next
    */

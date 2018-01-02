@@ -41,7 +41,7 @@ router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
 });
 
 router.post('/login', UserController.login);
-router.post('/logon', UserController.checkEmailCanUse, UserController.logon);
+router.post('/logon', UserController.logon);
 router.post('/follow/:id', UserController.verifyJwt, UserController.follow);
 router.post('/cancel-follow/:id', UserController.verifyJwt, UserController.cancelFollow);
 

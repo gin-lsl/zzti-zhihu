@@ -13,7 +13,7 @@ export class UserProxy {
    * @param password 密码
    */
   public static async createUser(email: string, password: string): Promise<IUserDocument> {
-    return await UserModel.create({ email: email, password: password });
+    return await UserModel.create({ email, password });
   }
 
   /**
@@ -23,7 +23,7 @@ export class UserProxy {
    * @param password 密码
    */
   public static async findByEmailAndPassword(email: string, password: string): Promise<IUserDocument> {
-    return await UserModel.findOne({ email: email, password: password });
+    return await UserModel.findOne({ email, password });
   }
 
   /**
@@ -32,6 +32,6 @@ export class UserProxy {
    * @param email 邮箱
    */
   public static async findByEmail(email: string): Promise<IUserDocument> {
-    return await UserModel.findOne({ email: email });
+    return await UserModel.findOne({ email });
   }
 }

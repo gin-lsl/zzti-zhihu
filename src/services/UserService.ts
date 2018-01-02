@@ -35,14 +35,9 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async logon(email: string, password: string): Promise<boolean | IUserDocument> {
-    try {
-      const user = await UserProxy.createUser(email, password);
-      return user;
-    } catch (e) {
-      debug('新增用户失败, %O', e);
-      return false;
-    }
+  public static async logon(email: string, password: string): Promise<IUserDocument> {
+    debug('UserService#logon: email: $s, password: %s', email, password);
+    return await UserProxy.createUser(email, password);
   }
 
   /**
@@ -52,7 +47,7 @@ export class UserService {
    */
   public static async checkEmailExist(email: string): Promise<boolean> {
     debug('UserService#checkEmailExist: ', email);
-    return await UserModel.findOne({ email: email }) !== null;
+    return await UserModel.findOne({ email }) !== null;
   }
 
   /**
@@ -61,7 +56,7 @@ export class UserService {
    * @param username 用户名
    */
   public static async checkUsernameExist(username: string): Promise<boolean> {
-    return await UserModel.findOne({ username: username }) !== null;
+    return await UserModel.findOne({ username }) !== null;
   }
 
   /**

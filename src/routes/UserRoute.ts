@@ -35,10 +35,11 @@ const logon = async (ctx: Context, next: () => Promise<any>) => {
   await next();
 };
 
-router.get('/', index);
+router.get('/active', UserController.activeAccount);
 router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
   ctx.body = ctx.state;
 });
+router.get('/:id', UserController.get);
 
 router.post('/login', UserController.login);
 router.post('/logon', UserController.logon);

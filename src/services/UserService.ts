@@ -5,6 +5,7 @@ import { IUserDocument } from '../schemas/IUserDocument';
 import { IServiceResult } from '../interfaces/index';
 import { ErrorCodeEnum, RequestResultUtil } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
+import { IUser } from '../entities/index';
 const debug = Debug('zzti-zhihu:service:user');
 
 /**
@@ -38,6 +39,15 @@ export class UserService {
   public static async logon(email: string, password: string): Promise<IUserDocument> {
     debug('UserService#logon: email: $s, password: %s', email, password);
     return await UserProxy.createUser(email, password);
+  }
+
+  /**
+   * 删除指定id的用户
+   *
+   * @param id 用户id
+   */
+  public static async remove(id): Promise<any> {
+    return await UserModel.findByIdAndRemove(id);
   }
 
   /**
@@ -99,6 +109,32 @@ export class UserService {
   public static async cancelFollow(currUserId: string, toUserId: string): Promise<void> {
     await UserModel.findByIdAndUpdate(currUserId, { $pull: { hesFollow: toUserId } });
     await UserModel.findByIdAndUpdate(toUserId, { $pull: { followHim: currUserId } });
+  }
+
+  /**
+   * 通过id获取用户信息
+   *
+   * @param userId 用户id
+   */
+  public static async getUserInfoById(userId: string): Promise<IServiceResult<IUser>> {
+    const user = await UserModel.findById(userId);
+    if (user) {
+      // 只返回安全信息
+      const userInfo: any = {};
+      userInfo.id = user.id;
+      userInfo.email = user.email;
+      userInfo.avatar = user.avatar;
+      userInfo.gender = user.gender;
+      userInfo.hesFollow = user.hesFollow;
+      userInfo.lastLoginTime = user.lastLoginTime;
+      userInfo.logonTime = user.logonTime;
+      userInfo.profile = user.profile;
+      userInfo.lv = user.lv;
+      userInfo.username = user.username;
+      return RequestResultUtil.createSuccess(userInfo);
+    } else {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
+    }
   }
 
 }

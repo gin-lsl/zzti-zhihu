@@ -1,5 +1,4 @@
 import { Context } from 'koa';
-import { sign } from 'jsonwebtoken';
 import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { createJWT, verifyJWT } from '../middleware/index';
@@ -13,6 +12,21 @@ const debug = Debug('zzti-zhihu:controller:user');
  * UserController
  */
 export class UserController {
+
+  /**
+   * 获取用户信息
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async get(ctx: Context, next: () => Promise<any>): Promise<any> {
+    debug('进入UserController:get');
+    const { id } = ctx.params;
+    if (!id || id.length !== 24) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
+    }
+    ctx.body = await UserService.getUserInfoById(id);
+  }
 
   /**
    * 用户登录
@@ -81,13 +95,41 @@ export class UserController {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST);
     }
     // 注册逻辑
-    const logonRes = await UserService.logon(email, password);
-    const access_token = await createJWT({
-      uid: logonRes.id,
-      eml: logonRes.email,
-      nam: logonRes.username
-    });
-    ctx.body = RequestResultUtil.createSuccess(access_token);
+    let logonRes;
+    try {
+      logonRes = await UserService.logon(email, password);
+      const access_token = await createJWT({
+        uid: logonRes.id,
+        eml: logonRes.email,
+        nam: logonRes.username
+      });
+      ctx.body = RequestResultUtil.createSuccess(access_token);
+    } catch (error) {
+      if (logonRes) {
+        await UserService.remove(logonRes.id);
+      }
+    } finally {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+
+  /**
+   * 激活账户
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async activeAccount(ctx: Context, next: () => Promise<any>): Promise<any> {
+    debug('激活账户');
+    const { key } = ctx.query;
+    const verifyResult = await verifyJWT(key);
+    if (verifyResult !== null) {
+      // ctx.body = UserService.getUserInfoById(verifyResult.uid);
+      ctx.body = RequestResultUtil.createSuccess(verifyResult);
+    } else {
+      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
   }
 
   /**
@@ -103,10 +145,7 @@ export class UserController {
     const checkRes = await UserService.checkEmailExist(email);
     debug('是否注册: ', checkRes);
     if (checkRes) {
-      return ctx.body = {
-        success: false,
-        msg: '邮箱已注册'
-      };
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST);
     }
     await next();
   }
@@ -123,15 +162,12 @@ export class UserController {
     if (!_authorization1) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
-    let can;
-    try {
-      can = await verifyJWT(_authorization1);
-      ctx.state.currentUser = can;
-      debug('can: ', can);
-      await next();
-    } catch (e) {
-      debug('校验错误: ', e);
+    const can = await verifyJWT(_authorization1);
+    debug('can: ', can);
+    if (can === null) {
       ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
+    } else {
+      ctx.state.currentUser = can;
     }
   }
 

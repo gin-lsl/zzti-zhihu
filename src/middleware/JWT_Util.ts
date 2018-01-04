@@ -12,7 +12,7 @@ import { AppConfig } from '../config/index';
 export const createJWT = (payload: string | object | Buffer): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(payload, AppConfig.JWT_Secret, { expiresIn: '6h' }, (error, jwt) => {
-      error ? reject(error) : resolve(jwt);
+      error ? resolve(null) : resolve(jwt);
     });
   });
 };
@@ -26,7 +26,7 @@ export const createJWT = (payload: string | object | Buffer): Promise<string> =>
 export const verifyJWT = (jwt: string): Promise<string | object> => {
   return new Promise((resolve, reject) => {
     verify(jwt, AppConfig.JWT_Secret, (error, result) => {
-      error ? reject(error) : resolve(result);
+      error ? resolve(null) : resolve(result);
     });
   });
 };

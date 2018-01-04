@@ -6,6 +6,8 @@ const router = new Router();
 
 router.get('/collect/:id', UserController.verifyJwt, QuestionController.collect);
 router.get('/cancel-collect/:id', UserController.verifyJwt, QuestionController.cancelCollect);
+router.get('/up/:id', UserController.verifyJwt, QuestionController.up);
+router.get('/cancel-up/:id', UserController.verifyJwt, QuestionController.cancelUp);
 router.get('/:id', QuestionController.getById);
 router.get('/', QuestionController.getAll);
 

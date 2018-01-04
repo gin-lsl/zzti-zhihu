@@ -3,6 +3,7 @@ import { QuestionService } from "../services/QuestionService";
 import * as Debug from 'debug';
 import { IQuestion } from "../entities/index";
 import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
+import { NextCallback } from "../types/index";
 
 const debug = Debug('zzti-zhihu:controller:question');
 
@@ -56,12 +57,34 @@ export class QuestionController {
     if (!id) {
       return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
-    try {
-      await QuestionService.cancelCollect(id, uid);
-      ctx.body = RequestResultUtil.createSuccess();
-    } catch (error) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    await QuestionService.cancelCollect(id, uid);
+    ctx.body = RequestResultUtil.createSuccess();
+  }
+
+  /**
+   * 对问题点赞
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async up(ctx: Context, next: NextCallback): Promise<any> {
+    debug('对问题点赞');
+    const { id } = ctx.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
+    // TODO: 点赞
+  }
+
+  /**
+   * 对问题取消点赞
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async cancelUp(ctx: Context, next: NextCallback): Promise<any> {
+    // TODO: 取消点赞
   }
 
   /**

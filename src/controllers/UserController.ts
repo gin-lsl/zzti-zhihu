@@ -157,17 +157,18 @@ export class UserController {
    * @param next next
    */
   public static async verifyJwt(ctx: Context, next: () => Promise<any>): Promise<any> {
-    const _authorization1 = ctx.get('Authorization');
-    debug('_authorization1: ', _authorization1);
-    if (!_authorization1) {
+    const authorization = ctx.get('Authorization');
+    debug('authorization: ', authorization);
+    if (!authorization) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
-    const can = await verifyJWT(_authorization1);
+    const can = await verifyJWT(authorization);
     debug('can: ', can);
     if (can === null) {
       ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     } else {
       ctx.state.currentUser = can;
+      await next();
     }
   }
 

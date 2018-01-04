@@ -2,7 +2,7 @@ import { IServiceResult } from "../interfaces/index";
 import { ErrorCodeEnum } from "./ErrorCode.enum";
 
 /**
- * 请求结果工具类
+ * 请求结果工具类, 使用它的方法来返回统一的API数据
  */
 export class RequestResultUtil {
 
@@ -15,8 +15,8 @@ export class RequestResultUtil {
   public static createError(errorCode: ErrorCodeEnum, errorMessage?: string): IServiceResult<any> {
     return {
       success: false,
-      errorCode: errorCode,
-      errorMessage: errorMessage
+      errorCode,
+      errorMessage,
     };
   }
 
@@ -28,7 +28,7 @@ export class RequestResultUtil {
   public static createSuccess<T>(successResult?: T): IServiceResult<T> {
     return {
       success: true,
-      successResult: successResult
+      successResult,
     };
   }
 }

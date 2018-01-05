@@ -1,1 +1,1 @@
-export * from './UserProxy';
+export * from './User.proxy';

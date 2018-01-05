@@ -24,7 +24,7 @@ const validEmail = (emailString: string): boolean => regexEmail.test(emailString
  */
 const pureNumber = (str: string): boolean => regexPureNumber.test(str);
 
-export const RegexTools = {
+export const RegexToolsUtil = {
   regexEmail,
   regexPureNumber,
   validEmail,

@@ -4,7 +4,7 @@ import * as bodyParser from 'koa-bodyparser';
 import * as Router from 'koa-router';
 import routes from './routes';
 import * as Cors from '@koa/cors';
-import { mongo } from './config/MongoConnection';
+import { mongo } from './config/index';
 import { NextCallback } from './types/index';
 import { RequestResultUtil, ErrorCodeEnum } from './apiStatus/index';
 

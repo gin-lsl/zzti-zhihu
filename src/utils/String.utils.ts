@@ -5,6 +5,9 @@
  */
 const isEmpty = (str: string): boolean => str == null || str === '';
 
+/**
+ * 字符串工具
+ */
 export const StringUtils = {
   isEmpty,
 };

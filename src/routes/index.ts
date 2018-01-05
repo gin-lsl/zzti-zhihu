@@ -1,8 +1,9 @@
 import * as Router from 'koa-router';
-import UserRoute from './UserRoute';
-import HomeRoute from './HomeRoute';
-import TopicRoute from './TopicRoute';
-import QuestionRoute from './QuestionRoute';
+
+import UserRoute from './User.route';
+import HomeRoute from './Home.route';
+import TopicRoute from './Topic.route';
+import QuestionRoute from './Question.route';
 
 const router = new Router();
 

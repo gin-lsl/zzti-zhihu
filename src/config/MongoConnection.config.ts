@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { MongoConfig } from './MongoConfig';
+import { MongoConfig } from './Mongo.config';
 import * as Debug from 'debug';
 
 const debug = Debug('zzti-zhihu:config:MongoConnection');

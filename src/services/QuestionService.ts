@@ -34,12 +34,12 @@ export class QuestionService {
   public static async collect(questionId: string, userId: string): Promise<IServiceResult<any>> {
     debug('收藏问题');
     const question = await QuestionModel.findById(questionId);
+    if (!question) {
+      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
     const user = await UserModel.findById(userId);
     if (!user) {
       return RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
-    }
-    if (!question) {
-      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     if (user.collectionQuestions.find(p => p === question.id)) {
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
@@ -76,12 +76,12 @@ export class QuestionService {
   public static async up(questionId: string, userId: string): Promise<IServiceResult<any>> {
     debug('对问题点赞');
     const question = await QuestionModel.findById(questionId);
+    if (!question) {
+      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
     const user = await UserModel.findById(userId);
     if (!user) {
       return RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
-    }
-    if (!question) {
-      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     if (question.upUsersId.find(p => p === user.id)) {
       // 已经点赞

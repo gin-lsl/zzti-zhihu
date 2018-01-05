@@ -11,7 +11,7 @@ import { AppConfig } from '../config/index';
  */
 export const createJWT = (payload: string | object | Buffer): Promise<string> => {
   return new Promise((resolve, reject) => {
-    sign(payload, AppConfig.JWT_Secret, { expiresIn: '6h' }, (error, jwt) => {
+    sign(payload, AppConfig.JWT_Secret, { expiresIn: AppConfig.expiresIn }, (error, jwt) => {
       error ? resolve(null) : resolve(jwt);
     });
   });

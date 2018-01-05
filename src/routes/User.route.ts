@@ -1,7 +1,8 @@
 import { Context } from 'koa';
 import * as Debug from 'debug';
 import * as Router from 'koa-router';
-import { UserController } from '../controllers/UserController';
+import { UserController } from '../controllers/index';
+import { verifyObjectIdMiddleware } from '../middleware/index';
 const router = new Router();
 const debug = Debug('zzti-zhihu:routes:user');
 
@@ -39,11 +40,11 @@ router.get('/active', UserController.activeAccount);
 router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
   ctx.body = ctx.state;
 });
-router.get('/:id', UserController.get);
+router.get('/:id', verifyObjectIdMiddleware, UserController.get);
 
 router.post('/login', UserController.login);
 router.post('/logon', UserController.logon);
-router.post('/follow/:id', UserController.verifyJwt, UserController.follow);
-router.post('/cancel-follow/:id', UserController.verifyJwt, UserController.cancelFollow);
+router.post('/follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.follow);
+router.post('/cancel-follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.cancelFollow);
 
 export default router;

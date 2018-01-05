@@ -1,10 +1,9 @@
 import { Context } from 'koa';
 import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
-import { createJWT, verifyJWT } from '../middleware/index';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
-import { RegexTools, StringUtils } from '../utils/index';
+import { RegexToolsUtil, StringUtils, createJWT, verifyJWT } from '../utils/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -21,7 +20,7 @@ export class UserController {
    */
   public static async get(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('进入UserController:get');
-    const { id } = ctx.params;
+    const { id } = ctx.state.params;
     if (!id || id.length !== 24) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
@@ -74,7 +73,7 @@ export class UserController {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__NO_EMAIL_OR_PASSWORD, '邮箱或密码不能为空');
     }
     // 邮箱不合法
-    if (!RegexTools.validEmail(email)) {
+    if (!RegexToolsUtil.validEmail(email)) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_ILLEGAL);
     }
     // 密码太短
@@ -82,7 +81,7 @@ export class UserController {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__PASSWORD_ERROR, '密码长短不能小于6位');
     }
     // 密码太简单
-    if (RegexTools.pureNumber(password)) {
+    if (RegexToolsUtil.pureNumber(password)) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '密码不能为纯数字');
     }
     // 两次输入的密码不一致
@@ -180,7 +179,7 @@ export class UserController {
    */
   public static async follow(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('关注用户');
-    const { id } = ctx.params;
+    const { id } = ctx.state.params;
     const { uid } = ctx.state.currentUser;
     if (!id) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
@@ -201,7 +200,7 @@ export class UserController {
    */
   public static async cancelFollow(ctx: Context, next: () => Promise<any>): Promise<any> {
     debug('取消关注');
-    const { id } = ctx.params;
+    const { id } = ctx.state.params;
     const { uid } = ctx.state.currentUser;
     if (!id) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);

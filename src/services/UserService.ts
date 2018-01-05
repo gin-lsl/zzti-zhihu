@@ -1,6 +1,6 @@
 import * as Debug from 'debug';
-import { UserModel } from '../models/UserModel';
-import { UserProxy } from '../proxy/UserProxy';
+import { UserModel } from '../models/index';
+import { UserProxy } from '../proxy/index';
 import { IUserDocument } from '../schemas/IUserDocument';
 import { IServiceResult } from '../interfaces/index';
 import { ErrorCodeEnum, RequestResultUtil } from '../apiStatus/index';

@@ -20,7 +20,7 @@ export class QuestionController {
    * @param ctx ctx
    * @param next next
    */
-  public static async postTopic(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async postTopic(ctx: Context, next: NextCallback): Promise<any> {
     debug('发布问题');
     const { title, description } = ctx.request.body as IQuestion;
     const postRes = await QuestionService.postQuestion(title, description);
@@ -33,12 +33,12 @@ export class QuestionController {
    * @param ctx ctx
    * @param next next
    */
-  public static async collect(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async collect(ctx: Context, next: NextCallback): Promise<any> {
     debug('收藏问题');
     const { id } = ctx.params;
     const { uid } = ctx.state.currentUser;
     if (!id) {
-      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     const collectRes = await QuestionService.collect(id, uid);
     ctx.body = collectRes;
@@ -50,12 +50,12 @@ export class QuestionController {
    * @param ctx ctx
    * @param next next
    */
-  public static async cancelCollect(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async cancelCollect(ctx: Context, next: NextCallback): Promise<any> {
     debug('取消收藏问题');
     const { id } = ctx.params;
     const { uid } = ctx.state.currentUser;
     if (!id) {
-      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     await QuestionService.cancelCollect(id, uid);
     ctx.body = RequestResultUtil.createSuccess();
@@ -72,9 +72,9 @@ export class QuestionController {
     const { id } = ctx.params;
     const { uid } = ctx.state.currentUser;
     if (!id) {
-      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
-    // TODO: 点赞
+    ctx.body = await QuestionService.up(id, uid);
   }
 
   /**
@@ -84,7 +84,14 @@ export class QuestionController {
    * @param next next
    */
   public static async cancelUp(ctx: Context, next: NextCallback): Promise<any> {
-    // TODO: 取消点赞
+    debug('取消问题点赞');
+    const { id } = ctx.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    await QuestionService.cancelUp(id, uid);
+    ctx.body = RequestResultUtil.createSuccess();
   }
 
   /**
@@ -93,7 +100,7 @@ export class QuestionController {
    * @param ctx ctx
    * @param next next
    */
-  public static async getAll(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async getAll(ctx: Context, next: NextCallback): Promise<any> {
     debug('获取所有问题: ', ctx.query);
     const limit = +ctx.query.limit;
     const questions = await QuestionService.getAll(+limit);
@@ -106,7 +113,7 @@ export class QuestionController {
    * @param ctx ctx
    * @param next next
    */
-  public static async getById(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async getById(ctx: Context, next: NextCallback): Promise<any> {
     debug('获取指定问题详情');
     const id = ctx.params.id;
     const question = await QuestionService.getById(id);

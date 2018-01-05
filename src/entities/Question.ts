@@ -21,6 +21,11 @@ export interface IQuestion {
    * 收藏此问题的用户id
    */
   collectUsersId: Array<string>;
+
+  /**
+   * 给此问题点赞的用户
+   */
+  upUsersId: Array<string>;
 }
 
 /**
@@ -32,6 +37,7 @@ export class Question implements IQuestion {
   title: string;
   description: string;
   collectUsersId: string[];
+  upUsersId: string[];
 
   /**
    * 生成mongoose模式定义对象
@@ -40,7 +46,8 @@ export class Question implements IQuestion {
     return {
       title: String,
       description: String,
-      collectUsersId: [String]
+      collectUsersId: [String],
+      upUsersId: [String],
     };
   }
 }

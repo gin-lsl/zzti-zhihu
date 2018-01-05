@@ -68,6 +68,47 @@ export class QuestionService {
   }
 
   /**
+   * 对问题点赞
+   *
+   * @param questionId 问题id
+   * @param userId 用户id
+   */
+  public static async up(questionId: string, userId: string): Promise<IServiceResult<any>> {
+    debug('对问题点赞');
+    const question = await QuestionModel.findById(questionId);
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
+    }
+    if (!question) {
+      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    if (question.upUsersId.find(p => p === user.id)) {
+      // 已经点赞
+      return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
+    }
+    try {
+      question.upUsersId.push(user.id);
+      await question.save();
+      return RequestResultUtil.createSuccess();
+    } catch (error) {
+      debug('点赞发生错误: %O', error);
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+  /**
+   * 对问题取消点赞
+   *
+   * @param questionId 问题id
+   * @param userId 用户id
+   */
+  public static async cancelUp(questionId: string, userId: string): Promise<void> {
+    debug('取消问题点赞');
+    await QuestionModel.findByIdAndUpdate(questionId, { $pull: { upUsersId: userId } });
+  }
+
+  /**
    * 获取所有问题
    *
    * @param limit 数量限制, 默认20条

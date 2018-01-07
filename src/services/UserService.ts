@@ -19,7 +19,8 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async login(email: string, password: string): Promise<IServiceResult<UserDTO>> {
+  public static async signIn(email: string, password: string): Promise<IServiceResult<UserDTO>> {
+    debug('signIn -> email: %s, password: %s', email, password);
     if (!(email && password)) {
       return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
     }
@@ -36,8 +37,8 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async logon(email: string, password: string): Promise<IUserDocument> {
-    debug('UserService#logon: email: $s, password: %s', email, password);
+  public static async signOn(email: string, password: string): Promise<IUserDocument> {
+    debug('signOn -> email: %s, password: %s', email, password);
     return await UserProxy.createUser(email, password);
   }
 
@@ -56,7 +57,7 @@ export class UserService {
    * @param email 邮箱
    */
   public static async checkEmailExist(email: string): Promise<boolean> {
-    debug('UserService#checkEmailExist: ', email);
+    debug('checkEmailExist -> email: ', email);
     return await UserModel.findOne({ email }) !== null;
   }
 

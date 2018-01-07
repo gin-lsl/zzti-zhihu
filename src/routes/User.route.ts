@@ -42,8 +42,8 @@ router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
 });
 router.get('/:id', verifyObjectIdMiddleware, UserController.get);
 
-router.post('/login', UserController.login);
-router.post('/logon', UserController.logon);
+router.post('/signin', UserController.signIn);
+router.post('/signon', UserController.signOn);
 router.post('/follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.follow);
 router.post('/cancel-follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.cancelFollow);
 

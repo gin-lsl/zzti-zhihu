@@ -22,4 +22,22 @@ export const AppConfig = {
    * JWT 过期时间
    */
   expiresIn,
+
+};
+
+/**
+ * 站点配置
+ */
+export const SiteConfig = {
+
+  /**
+   * 站点名称
+   */
+  siteName: 'GIN LSL',
+
+  /**
+   * URL
+   */
+  siteUrl: 'http://127.0.0.1:3000',
+
 };

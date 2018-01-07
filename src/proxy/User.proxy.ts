@@ -13,7 +13,7 @@ export class UserProxy {
    * @param password 密码
    */
   public static async createUser(email: string, password: string): Promise<IUserDocument> {
-    return await UserModel.create({ email, password });
+    return await UserModel.create({ email, password, username: email });
   }
 
   /**

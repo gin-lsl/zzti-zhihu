@@ -3,7 +3,7 @@ import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
-import { RegexToolsUtil, StringUtils, createJWT, verifyJWT } from '../utils/index';
+import { RegexToolsUtil, StringUtils, createJWT, verifyJWT, sendActiveMail } from '../utils/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -33,15 +33,15 @@ export class UserController {
    * @param ctx ctx
    * @param next next
    */
-  public static async login(ctx: Context, next: () => Promise<any>): Promise<any> {
-    debug('进入UserController:login');
+  public static async signIn(ctx: Context, next: () => Promise<any>): Promise<any> {
+    debug('signIn');
     const { email, password } = ctx.request.body;
     let _body;
     if ((email == null || email === '') || (password == null || password === '')) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR, '邮箱或密码不能为空');
     }
     try {
-      const loginRes = await UserService.login(email, password);
+      const loginRes = await UserService.signIn(email, password);
       if (loginRes.success) {
         const access_token = await createJWT({
           uid: loginRes.successResult.id,
@@ -50,7 +50,6 @@ export class UserController {
         });
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
       } else {
-        ctx.status = 401;
         _body = loginRes;
       }
     } catch (e) {
@@ -65,7 +64,7 @@ export class UserController {
    * @param ctx ctx
    * @param next next
    */
-  public static async logon(ctx: Context, next: () => Promise<any>): Promise<any> {
+  public static async signOn(ctx: Context, next: () => Promise<any>): Promise<any> {
     const { email, password, passwordRepeat } = ctx.request.body;
     debug('注册请求: email: %s, password: %s, passwordRepeat: %s', email, password, passwordRepeat);
     // 参数为空
@@ -96,22 +95,22 @@ export class UserController {
     // 注册逻辑
     let logonRes;
     try {
-      logonRes = await UserService.logon(email, password);
+      logonRes = await UserService.signOn(email, password);
       const access_token = await createJWT({
         uid: logonRes.id,
         eml: logonRes.email,
         nam: logonRes.username
       });
+      sendActiveMail(email, access_token, email);
       ctx.body = RequestResultUtil.createSuccess(access_token);
     } catch (error) {
+      debug('注册失败: %O', error);
       if (logonRes) {
         await UserService.remove(logonRes.id);
       }
-    } finally {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }
   }
-
 
   /**
    * 激活账户

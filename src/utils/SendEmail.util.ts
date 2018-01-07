@@ -37,17 +37,11 @@ export function sendActiveMail(who: string, accessToken: string, name: string): 
   const to = who;
   const cc = MailConfig.auth.user;
   const subject = SiteConfig.siteName + ' - 账户激活';
-  // const subject = '星期一的作业';
   const html = `<p>您好，${name}，</p>
                 <p>我们收到您在 ${SiteConfig.siteName} 的注册请求。请点击下面的链接来激活账号：</p>
                 <a href="${SiteConfig.siteUrl}/active-account?key=${accessToken}&name=${name}>激活链接</a>
                 <p>若您没有在 ${SiteConfig.siteName} 填写过注册信息，可能是他人滥用或者错误使用了您的电子邮箱，请忽略或直接删除此邮件即可，我们对您造成的打扰深感抱歉。</p>
                 <p>${SiteConfig.siteName} 谨上。</p>`;
-  // const html = `<p>您好：${name}</p>
-  // <p>我们收到您在${SiteConfig.siteName}社区的注册请求。请点击下面的链接来激活账号：</p>
-  // <a href="${SiteConfig.siteUrl}/active_account?key=${accessToken}&name=${name}">激活链接</a>
-  // <p>若您没有在${SiteConfig.siteName}社区填写过注册信息，可能是他人滥用或者错误使用了您的电子邮箱，请忽略或者直接删除此邮箱即可，我们对给您造成的打扰深感抱歉</p>
-  // <p>${SiteConfig.siteName}社区 谨上。</p>`;
   debug('from: %s', from);
   debug('to: %s', to);
   debug('subject: %s', subject);

@@ -2,7 +2,7 @@ import { Context } from 'koa';
 import { UserService } from '../services/UserService';
 import * as Debug from 'debug';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
-import { UserDTO } from '../dto/index';
+import { UserDTO, JWTDTO } from '../dto/index';
 import { RegexToolsUtil, StringUtils, createJWT, verifyJWT, sendActiveMail } from '../utils/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
@@ -43,11 +43,8 @@ export class UserController {
     try {
       const loginRes = await UserService.signIn(email, password);
       if (loginRes.success) {
-        const access_token = await createJWT({
-          uid: loginRes.successResult.id,
-          eml: loginRes.successResult.email,
-          nam: loginRes.successResult.username
-        });
+        const _result = loginRes.successResult;
+        const access_token = await createJWT(new JWTDTO(_result.id, _result.email, _result.username));
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
       } else {
         _body = loginRes;
@@ -96,11 +93,7 @@ export class UserController {
     let logonRes;
     try {
       logonRes = await UserService.signOn(email, password);
-      const access_token = await createJWT({
-        uid: logonRes.id,
-        eml: logonRes.email,
-        nam: logonRes.username
-      });
+      const access_token = await createJWT(new JWTDTO(logonRes.id, logonRes.email, logonRes.username));
       sendActiveMail(email, access_token, email);
       ctx.body = RequestResultUtil.createSuccess(access_token);
     } catch (error) {
@@ -123,6 +116,7 @@ export class UserController {
     const { key } = ctx.query;
     const verifyResult = await verifyJWT(key);
     if (verifyResult !== null) {
+      await UserService.activeAccount(verifyResult.uid);
       // ctx.body = UserService.getUserInfoById(verifyResult.uid);
       ctx.body = RequestResultUtil.createSuccess(verifyResult);
     } else {

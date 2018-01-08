@@ -47,8 +47,17 @@ export class UserService {
    *
    * @param id 用户id
    */
-  public static async remove(id): Promise<any> {
+  public static async remove(id: string): Promise<any> {
     return await UserModel.findByIdAndRemove(id);
+  }
+
+  /**
+   * 激活账户
+   *
+   * @param id 用户id
+   */
+  public static async activeAccount(id: string): Promise<any> {
+    return await UserModel.findByIdAndUpdate(id, { $set: { actived: true } });
   }
 
   /**

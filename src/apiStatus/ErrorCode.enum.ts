@@ -13,6 +13,11 @@ export enum ErrorCodeEnum {
    */
   UNDEFINED_ERROR,
 
+  /**
+   * 缺少参数
+   */
+  MISSING__PARAMETERS,
+
   //
   // 登录
   //

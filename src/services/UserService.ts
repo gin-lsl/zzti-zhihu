@@ -37,9 +37,9 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async signOn(email: string, password: string): Promise<IUserDocument> {
+  public static async signOn(email: string, password: string): Promise<UserDTO> {
     debug('signOn -> email: %s, password: %s', email, password);
-    return await UserProxy.createUser(email, password);
+    return await UserProxy.createUser(email, password) as UserDTO;
   }
 
   /**

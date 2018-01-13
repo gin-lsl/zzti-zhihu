@@ -1,6 +1,6 @@
+import * as Debug from 'debug';
 import { Context } from 'koa';
 import { UserService } from '../services/UserService';
-import * as Debug from 'debug';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 import { UserDTO, JWTDTO } from '../dto/index';
 import { RegexToolsUtil, StringUtils, createJWT, verifyJWT, sendActiveMail } from '../utils/index';
@@ -85,7 +85,7 @@ export class UserController {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST);
     }
     const access_token = await createJWT({ eml: email, tmp: Date.now() }, AppConfig.JWT_SECRET__ACTIVE, AppConfig.EXPIRES_IN__ACTIVE);
-    sendActiveMail(email, access_token, email);
+    // sendActiveMail(email, access_token, email);
     ctx.body = RequestResultUtil.createSuccess(access_token);
   }
 
@@ -99,11 +99,12 @@ export class UserController {
 
     debug('激活账户');
     const { key } = ctx.query;
+    debug('query: ', ctx.query);
     const verifyResult = await verifyJWT(key, AppConfig.JWT_SECRET__ACTIVE);
     if (verifyResult !== null) {
-      await UserService.activeAccount(verifyResult.uid);
+      // await UserService.activeAccount(verifyResult.uid);
       // ctx.body = UserService.getUserInfoById(verifyResult.uid);
-      ctx.body = RequestResultUtil.createSuccess({ verifyResult, access_token: key });
+      ctx.body = RequestResultUtil.createSuccess({ ...verifyResult, access_token: key });
     } else {
       ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }
@@ -118,8 +119,8 @@ export class UserController {
   public static async initUser(ctx: Context, next: NextCallback): Promise<any> {
 
     const userInfo = ctx.request.body;
-    const email = await verifyJWT<string>(userInfo.access_token);
-    if (!email) {
+    const verifyResult = await verifyJWT<{ eml: string }>(userInfo.access_token, AppConfig.JWT_SECRET__ACTIVE);
+    if (!verifyResult) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION, '邮箱验证失效, 请重新前往注册页面注册邮箱');
     }
     if (StringUtils.isEmpty(userInfo.username)
@@ -139,12 +140,14 @@ export class UserController {
     if (userInfo.password !== userInfo.passwordRepeat) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '两次输入的密码不一致');
     }
-    // 注册逻辑
+    // 添加用户逻辑
     let logonRes: UserDTO;
     try {
-      logonRes = await UserProxy.createAndReturnProfile({ email: email, username: userInfo.username, password: userInfo.password });
+      logonRes = await UserProxy.createAndReturnProfile({
+        email: verifyResult.eml, username: userInfo.username, password: userInfo.password
+      });
       const access_token = await createJWT(JWTDTO.createJWTDTO(logonRes.id, logonRes.email, logonRes.username));
-      return ctx.body = RequestResultUtil.createSuccess({ access_token, logonRes });
+      return ctx.body = RequestResultUtil.createSuccess({ access_token, ...logonRes });
     } catch (error) {
       debug('添加用户失败: %O', error);
       if (logonRes) {

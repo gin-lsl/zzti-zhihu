@@ -42,5 +42,5 @@ app.use(routes.routes());
 
 // 启动服务器
 app.listen(3000, () => {
-  debug('server listening 3000');
+  console.log('server listening 3000');
 });

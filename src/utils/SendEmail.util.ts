@@ -42,9 +42,5 @@ export function sendActiveMail(who: string, accessToken: string, name: string): 
                 <a href="${SiteConfig.siteUrl}/active-account?key=${accessToken}&name=${name}>激活链接</a>
                 <p>若您没有在 ${SiteConfig.siteName} 填写过注册信息，可能是他人滥用或者错误使用了您的电子邮箱，请忽略或直接删除此邮件即可，我们对您造成的打扰深感抱歉。</p>
                 <p>${SiteConfig.siteName} 谨上。</p>`;
-  debug('from: %s', from);
-  debug('to: %s', to);
-  debug('subject: %s', subject);
-  debug('html: %s', html);
   sendMail({ from, to, subject, html, cc });
 }

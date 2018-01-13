@@ -1,7 +1,10 @@
+import * as Debug from 'debug';
 import { IUserDocument } from "../schemas/IUserDocument";
 import { UserModel } from "../models/index";
 import { User } from "../entities/index";
 import { UserDTO } from "../dto/index";
+
+const debug = Debug('zzti-zhihu:proxy:user');
 
 /**
  * User方法代理
@@ -26,6 +29,7 @@ export class UserProxy {
    */
   public static async createAndReturnProfile(user: any): Promise<UserDTO> {
 
+    debug('createAndReturnProfile => user: %o', user);
     const saved = await new UserModel(user).save();
     return {
       id: saved.id,

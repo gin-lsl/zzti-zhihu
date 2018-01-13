@@ -46,5 +46,6 @@ router.post('/signin', UserController.signIn);
 router.post('/signon', UserController.signOn);
 router.post('/follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.follow);
 router.post('/cancel-follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.cancelFollow);
+router.post('/init', UserController.initUser);
 
 export default router;

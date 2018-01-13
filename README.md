@@ -3,11 +3,14 @@
 设置环境变量:
 
 CMD:
-```ps1
-$env:DEBUG = "zzti-zhihu:*"
+```bash
+set DEBUG=zzti-zhihu:*
+set env=development
+# 注意等号左右不能有空格
 ```
 
 PowerShell:
-```cmd
-set DEBUG=zzti-zhihu:*
+```powershell
+$env:DEBUG = 'zzti-zhihu:*'
+$env:env = 'development'
 ```

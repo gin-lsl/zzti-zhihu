@@ -192,11 +192,10 @@ export class UserController {
     const can = await verifyJWT(authorization);
     debug('can: ', can);
     if (can === null) {
-      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
-    } else {
-      ctx.state.currentUser = can;
-      await next();
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
+    ctx.state.currentUser = can;
+    await next();
   }
 
   /**

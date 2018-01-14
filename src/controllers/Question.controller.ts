@@ -22,8 +22,10 @@ export class QuestionController {
    */
   public static async postTopic(ctx: Context, next: NextCallback): Promise<any> {
     debug('发布问题');
-    const { title, description } = ctx.request.body as IQuestion;
-    const postRes = await QuestionService.postQuestion(title, description);
+    // const { title, description, tags, isAnonymous } = ctx.request.body as IQuestion;
+    const question = ctx.request.body as IQuestion;
+    debug('question: %O', question);
+    const postRes = await QuestionService.postQuestion(ctx.request.body, ctx.state.currentUser.uid);
     ctx.body = RequestResultUtil.createSuccess<IQuestion>(postRes);
   }
 

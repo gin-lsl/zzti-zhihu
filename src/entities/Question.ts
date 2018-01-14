@@ -18,6 +18,16 @@ export interface IQuestion {
   description: string;
 
   /**
+   * 用户ID
+   */
+  userId: string;
+
+  /**
+   * 标签
+   */
+  tags: Array<string>;
+
+  /**
    * 收藏此问题的用户id
    */
   collectUsersId: Array<string>;
@@ -26,6 +36,11 @@ export interface IQuestion {
    * 给此问题点赞的用户
    */
   upUsersId: Array<string>;
+
+  /**
+   * 是否是匿名用户提问
+   */
+  isAnonymous: boolean;
 }
 
 /**
@@ -36,8 +51,11 @@ export interface IQuestion {
 export class Question implements IQuestion {
   title: string;
   description: string;
+  userId: string;
+  tags: string[];
   collectUsersId: string[];
   upUsersId: string[];
+  isAnonymous: boolean;
 
   /**
    * 生成mongoose模式定义对象
@@ -46,8 +64,11 @@ export class Question implements IQuestion {
     return {
       title: String,
       description: String,
+      userId: String,
+      tags: [String],
       collectUsersId: [String],
       upUsersId: [String],
+      isAnonymous: Boolean,
     };
   }
 }

@@ -20,9 +20,10 @@ export class QuestionService {
    * @param title 标题
    * @param description 描述
    */
-  public static async postQuestion(title: string, description: string): Promise<any> {
-    const question = new QuestionModel({ title, description });
-    return question.save();
+  public static async postQuestion(question: IQuestion, userId: string): Promise<any> {
+    // const question = new QuestionModel({ title, description });
+    // return question.save();
+    return new QuestionModel({ ...question, userId }).save();
   }
 
   /**

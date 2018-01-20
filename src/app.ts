@@ -11,8 +11,9 @@ import { RequestResultUtil, ErrorCodeEnum } from './apiStatus/index';
 const debug = Debug('zzti-zhihu:app');
 
 const cors = Cors({
-  allowHeaders: '*',
-  allowMethods: '*'
+  origin: '*',
+  allowMethods: '*',
+  allowHeaders: ['content-type', '*'],
 });
 
 // 连接MongoDB数据库

@@ -177,7 +177,7 @@ export class UserController {
   }
 
   /**
-   * 校验JWT
+   * 校验JWT, 是Header的 Authorization 字段的值
    *
    * @param ctx ctx
    * @param next next

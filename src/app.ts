@@ -13,7 +13,7 @@ const debug = Debug('zzti-zhihu:app');
 const cors = Cors({
   origin: '*',
   allowMethods: '*',
-  allowHeaders: ['content-type', '*'],
+  allowHeaders: ['content-type', 'authorization', '*'],
 });
 
 // 连接MongoDB数据库

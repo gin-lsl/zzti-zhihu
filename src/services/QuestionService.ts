@@ -47,7 +47,7 @@ export class QuestionService {
     }
     try {
       user.collectionQuestions.push(question.id);
-      question.collectUsersId.push(user.id);
+      question.collectUserIds.push(user.id);
       await user.save();
       await question.save();
       return RequestResultUtil.createSuccess();
@@ -84,12 +84,12 @@ export class QuestionService {
     if (!user) {
       return RequestResultUtil.createError(ErrorCodeEnum.AUTHORIZATION);
     }
-    if (question.upUsersId.find(p => p === user.id)) {
+    if (question.upUserIds.find(p => p === user.id)) {
       // 已经点赞
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
-      question.upUsersId.push(user.id);
+      question.upUserIds.push(user.id);
       await question.save();
       return RequestResultUtil.createSuccess();
     } catch (error) {

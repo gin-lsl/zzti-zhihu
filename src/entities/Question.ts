@@ -30,12 +30,17 @@ export interface IQuestion {
   /**
    * 收藏此问题的用户id
    */
-  collectUsersId: Array<string>;
+  collectUserIds: Array<string>;
 
   /**
    * 给此问题点赞的用户
    */
-  upUsersId: Array<string>;
+  upUserIds: Array<string>;
+
+  /**
+   * 反对此问题的用户
+   */
+  downUserIds: Array<string>;
 
   /**
    * 是否是匿名用户提问
@@ -53,8 +58,9 @@ export class Question implements IQuestion {
   description: string;
   userId: string;
   tags: string[];
-  collectUsersId: string[];
-  upUsersId: string[];
+  collectUserIds: string[];
+  upUserIds: string[];
+  downUserIds: string[];
   isAnonymous: boolean;
 
   /**
@@ -66,8 +72,9 @@ export class Question implements IQuestion {
       description: String,
       userId: String,
       tags: [String],
-      collectUsersId: [String],
-      upUsersId: [String],
+      collectUserIds: [String],
+      upUserIds: [String],
+      downUserIds: [String],
       isAnonymous: Boolean,
     };
   }

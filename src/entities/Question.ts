@@ -43,6 +43,11 @@ export interface IQuestion {
   downUserIds: Array<string>;
 
   /**
+   * 收藏此问题的用户
+   */
+  saveUserIds: Array<string>;
+
+  /**
    * 是否是匿名用户提问
    */
   isAnonymous: boolean;
@@ -61,6 +66,7 @@ export class Question implements IQuestion {
   collectUserIds: string[];
   upUserIds: string[];
   downUserIds: string[];
+  saveUserIds: string[];
   isAnonymous: boolean;
 
   /**
@@ -75,6 +81,7 @@ export class Question implements IQuestion {
       collectUserIds: [String],
       upUserIds: [String],
       downUserIds: [String],
+      saveUserIds: [String],
       isAnonymous: Boolean,
     };
   }

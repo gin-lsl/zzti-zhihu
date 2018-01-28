@@ -56,17 +56,17 @@ export interface IUser {
   /**
    * 关注他的
    */
-  followHim: Array<string>;
+  followHimIds: Array<string>;
 
   /**
    * 他关注的
    */
-  hesFollow: Array<string>;
+  hesFollowIds: Array<string>;
 
   /**
    * 他收藏的
    */
-  collectionQuestions: Array<string>;
+  collectionQuestionIds: Array<string>;
 
   /**
    * 加盐值
@@ -90,9 +90,9 @@ export class User implements IUser {
   avatar: string;
   logonTime: Date;
   lastLoginTime: Date;
-  followHim: string[];
-  hesFollow: string[];
-  collectionQuestions: string[];
+  followHimIds: string[];
+  hesFollowIds: string[];
+  collectionQuestionIds: string[];
   salt: string;
 
   /**
@@ -109,9 +109,9 @@ export class User implements IUser {
       avatar: String,
       logonTime: Date,
       lastLoginTime: Date,
-      followHim: [String],
-      hesFollow: [String],
-      collectionQuestions: [String],
+      followHimIds: [String],
+      hesFollowIds: [String],
+      collectionQuestionIds: [String],
       salt: String,
     };
   }

@@ -3,7 +3,7 @@ import { ErrorCodeEnum } from "../apiStatus";
 /**
  * Service返回的数据对象接口
  */
-export interface IServiceResult<T> {
+export interface IServiceResult<T = any> {
 
   /**
    * 是否成功

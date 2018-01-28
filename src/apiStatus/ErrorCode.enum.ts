@@ -106,4 +106,9 @@ export enum ErrorCodeEnum {
    */
   OPERATION_DUPLICATION,
 
+  /**
+   * 操作冲突
+   */
+  OPERATION_CONFLICT,
+
 }

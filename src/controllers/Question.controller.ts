@@ -97,6 +97,72 @@ export class QuestionController {
   }
 
   /**
+   * 反对问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async down(ctx: Context, next: NextCallback): Promise<any> {
+    debug('反对问题');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    ctx.body = await QuestionService.down(id, uid);
+  }
+
+  /**
+   * 对问题取消反对
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async cancelDown(ctx: Context, next: NextCallback): Promise<any> {
+    debug('取消问题反对');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    await QuestionService.cancelDown(id, uid);
+    ctx.body = RequestResultUtil.createSuccess();
+  }
+
+  /**
+   * 收藏问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async like(ctx: Context, next: NextCallback): Promise<any> {
+    debug('收藏问题');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    ctx.body = await QuestionService.like(id, uid);
+  }
+
+  /**
+   * 取消收藏问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async unLike(ctx: Context, next: NextCallback): Promise<any> {
+    debug('取消收藏');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    await QuestionService.unLike(id, uid);
+    ctx.body = RequestResultUtil.createSuccess();
+  }
+
+  /**
    * 获取所有问题
    *
    * @param ctx ctx

@@ -135,7 +135,7 @@ export class QuestionService {
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
-      question.saveUserIds.push(user.id);
+      question.downUserIds.push(user.id);
       await question.save();
       return RequestResultUtil.createSuccess();
     } catch (error) {
@@ -146,7 +146,7 @@ export class QuestionService {
 
   public static async cancelDown(questionId: string, userId: string): Promise<void> {
     debug('取消反对某问题');
-    await QuestionModel.findByIdAndUpdate(questionId, { $pull: { upUserIds: userId } });
+    await QuestionModel.findByIdAndUpdate(questionId, { $pull: { downUserIds: userId } });
   }
 
   /**
@@ -208,6 +208,20 @@ export class QuestionService {
    */
   public static async getById(id: string): Promise<IQuestionDocument> {
     return await QuestionModel.findById(id);
+  }
+
+  /**
+   * 搜索
+   *
+   * @param searchText 搜索文本
+   */
+  public static async search(searchText: string = ''): Promise<IServiceResult> {
+    const searchRegex = searchText
+      .split(' ')
+      .map(p => `(${p})`)
+      .join('|');
+    const foundQuestions = await QuestionModel.find().where('title', RegExp(searchRegex)).exec();
+    return RequestResultUtil.createSuccess(foundQuestions);
   }
 
 }

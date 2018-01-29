@@ -187,4 +187,14 @@ export class QuestionController {
     const question = await QuestionService.getById(id);
     return ctx.body = RequestResultUtil.createSuccess(question);
   }
+
+  /**
+   * 搜索
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async search(ctx: Context, next: NextCallback): Promise<any> {
+    return ctx.body = await QuestionService.search(ctx.query.search);
+  }
 }

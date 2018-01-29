@@ -12,6 +12,7 @@ router.get('/down/:id', verifyObjectIdMiddleware, UserController.verifyJwt, Ques
 router.get('/cancel-down/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.cancelDown);
 router.get('/like/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.like);
 router.get('/unlike/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.unLike);
+router.get('/search', QuestionController.search);
 router.get('/:id', verifyObjectIdMiddleware, QuestionController.getById);
 router.get('/', QuestionController.getAll);
 

@@ -221,7 +221,16 @@ export class QuestionService {
       .map(p => `(${p})`)
       .join('|');
     const foundQuestions = await QuestionModel.find().where('title', RegExp(searchRegex)).exec();
-    return RequestResultUtil.createSuccess(foundQuestions);
+    return RequestResultUtil.createSuccess(foundQuestions && foundQuestions.map(p => ({
+      id: p.id,
+      tags: p.tags,
+      collcateUserIds: p.collectUserIds,
+      upUserIds: p.upUserIds,
+      downUserIds: p.downUserIds,
+      saveUserIds: p.saveUserIds,
+      description: p.description,
+      title: p.title
+    })));
   }
 
 }

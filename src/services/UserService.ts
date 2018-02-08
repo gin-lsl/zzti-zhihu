@@ -92,15 +92,15 @@ export class UserService {
     if (!(currUser && toUser)) {
       return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
-    debug('打印已关注用户列表: ', currUser.hesFollow, ', 要关注的用户: ', toUser.id);
-    if (currUser.hesFollow.find(p => p === toUser.id)) {
+    debug('打印已关注用户列表: ', currUser.hesFollowIds, ', 要关注的用户: ', toUser.id);
+    if (currUser.hesFollowIds.find(p => p === toUser.id)) {
       debug('判断是否已存在');
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
       debug('更新关注用户列表');
-      currUser.hesFollow.push(toUser.id);
-      toUser.followHim.push(currUser.id);
+      currUser.hesFollowIds.push(toUser.id);
+      toUser.followHimIds.push(currUser.id);
       await currUser.save();
       await toUser.save();
       return RequestResultUtil.createSuccess();
@@ -135,7 +135,7 @@ export class UserService {
       userInfo.email = user.email;
       userInfo.avatar = user.avatar;
       userInfo.gender = user.gender;
-      userInfo.hesFollow = user.hesFollow;
+      userInfo.hesFollow = user.hesFollowIds;
       userInfo.lastLoginTime = user.lastLoginTime;
       userInfo.logonTime = user.logonTime;
       userInfo.profile = user.profile;

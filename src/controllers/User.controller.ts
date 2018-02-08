@@ -7,6 +7,7 @@ import { RegexToolsUtil, StringUtils, createJWT, verifyJWT, sendActiveMail } fro
 import { NextCallback } from '../types/index';
 import { UserProxy } from '../proxy/index';
 import { AppConfig } from '../config/index';
+import { QuestionService } from '../services/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -24,11 +25,27 @@ export class UserController {
   public static async get(ctx: Context, next: NextCallback): Promise<any> {
 
     debug('进入UserController:get');
+
+    // 获取Authorizaion头信息, 以便确认是否传回隐私性的信息
+    const authorization = ctx.get('Authorization');
+
     const { id } = ctx.state.params;
     if (!id || id.length !== 24) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
-    ctx.body = await UserService.getUserInfoById(id);
+    const postedQuestions = await QuestionService.getUserPosted(id);
+    const base = await UserService.getUserInfoById(id);
+    if (postedQuestions.success && base.success) {
+      ctx.body = RequestResultUtil.createSuccess({
+        base: base.successResult,
+        postedQuestions: postedQuestions.successResult,
+      });
+    }
+    // ctx.body = {
+    //   base,
+    //   postedQuestions
+    // };
+    // ctx.body = await UserService.getUserInfoById(id);
   }
 
   /**

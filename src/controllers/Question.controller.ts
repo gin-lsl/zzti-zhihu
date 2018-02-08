@@ -24,9 +24,9 @@ export class QuestionController {
     debug('发布问题');
     // const { title, description, tags, isAnonymous } = ctx.request.body as IQuestion;
     const question = ctx.request.body as IQuestion;
+    question.userId = ctx.state.currentUser.uid;
     debug('question: %O', question);
-    const postRes = await QuestionService.postQuestion(ctx.request.body, ctx.state.currentUser.uid);
-    ctx.body = RequestResultUtil.createSuccess<IQuestion>(postRes);
+    ctx.body = await QuestionService.postQuestion(ctx.request.body, ctx.state.currentUser.uid);
   }
 
   /**
@@ -184,8 +184,7 @@ export class QuestionController {
   public static async getById(ctx: Context, next: NextCallback): Promise<any> {
     debug('获取指定问题详情');
     const { id } = ctx.state.params;
-    const question = await QuestionService.getById(id);
-    return ctx.body = RequestResultUtil.createSuccess(question);
+    ctx.body = await QuestionService.getById(id);
   }
 
   /**

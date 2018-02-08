@@ -20,10 +20,14 @@ export class QuestionService {
    * @param title 标题
    * @param description 描述
    */
-  public static async postQuestion(question: IQuestion, userId: string): Promise<any> {
-    // const question = new QuestionModel({ title, description });
-    // return question.save();
-    return new QuestionModel({ ...question, userId }).save();
+  public static async postQuestion(question: IQuestion, userId: string): Promise<IServiceResult> {
+    let saveResult;
+    try {
+      saveResult = await new QuestionModel({ ...question, userId, postDateTime: new Date() }).save();
+      return RequestResultUtil.createSuccess(saveResult.id);
+    } catch (error) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
   }
 
   /**
@@ -206,8 +210,46 @@ export class QuestionService {
    *
    * @param id 问题的id
    */
-  public static async getById(id: string): Promise<IQuestionDocument> {
-    return await QuestionModel.findById(id);
+  public static async getById(id: string): Promise<IServiceResult> {
+    try {
+      const q = await QuestionModel.findById(id);
+      return RequestResultUtil.createSuccess<any>({
+        id: q.id,
+        title: q.title,
+        description: q.description,
+        tags: q.tags,
+        collectUserIds: q.collectUserIds,
+        upUserIds: q.upUserIds,
+        downUserIds: q.downUserIds,
+        saveUserIds: q.saveUserIds,
+      });
+    } catch (error) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+  /**
+   * 获取指定用户发布的帖子
+   *
+   * @param userId 用户id
+   */
+  public static async getUserPosted(userId: string): Promise<IServiceResult> {
+    try {
+      const q = await QuestionModel.find().where('userId', userId).exec();
+      return RequestResultUtil.createSuccess(q.map(_ => ({
+        id: _.id,
+        title: _.title,
+        description: _.description,
+        tags: _.tags,
+        collectUserIds: _.collectUserIds,
+        upUserIds: _.upUserIds,
+        downUserIds: _.downUserIds,
+        saveUserIds: _.saveUserIds,
+        postDateTime: _.postDateTime,
+      })));
+    } catch (error) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
   }
 
   /**
@@ -224,7 +266,7 @@ export class QuestionService {
     return RequestResultUtil.createSuccess(foundQuestions && foundQuestions.map(p => ({
       id: p.id,
       tags: p.tags,
-      collcateUserIds: p.collectUserIds,
+      collectUserIds: p.collectUserIds,
       upUserIds: p.upUserIds,
       downUserIds: p.downUserIds,
       saveUserIds: p.saveUserIds,

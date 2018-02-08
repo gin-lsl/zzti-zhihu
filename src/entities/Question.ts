@@ -28,6 +28,11 @@ export interface IQuestion {
   tags: Array<string>;
 
   /**
+   * 发布日期
+   */
+  postDateTime: Date;
+
+  /**
    * 收藏此问题的用户id
    */
   collectUserIds: Array<string>;
@@ -63,6 +68,7 @@ export class Question implements IQuestion {
   description: string;
   userId: string;
   tags: string[];
+  postDateTime: Date;
   collectUserIds: string[];
   upUserIds: string[];
   downUserIds: string[];
@@ -78,6 +84,7 @@ export class Question implements IQuestion {
       description: String,
       userId: String,
       tags: [String],
+      postDateTime: Date,
       collectUserIds: [String],
       upUserIds: [String],
       downUserIds: [String],

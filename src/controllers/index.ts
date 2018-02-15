@@ -1,2 +1,3 @@
-export * from './Question.controller';
-export * from './User.controller';
+export * from './QuestionController';
+export * from './ReplyController';
+export * from './UserController';

@@ -7,5 +7,4 @@ import { IUser } from '../entities/User';
  * @author lsl
  */
 export interface IUserDocument extends mongoose.Document, IUser {
-
 }

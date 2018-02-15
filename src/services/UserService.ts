@@ -126,7 +126,7 @@ export class UserService {
    *
    * @param userId 用户id
    */
-  public static async getUserInfoById(userId: string): Promise<IServiceResult<IUser>> {
+  public static async getUserInfoById(userId: string): Promise<IServiceResult<IUser & { id: string }>> {
     const user = await UserModel.findById(userId);
     if (user) {
       // 只返回安全信息

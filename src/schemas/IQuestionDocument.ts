@@ -7,5 +7,4 @@ import { IQuestion } from "../entities/index";
  * @author lsl
  */
 export interface IQuestionDocument extends Document, IQuestion {
-
 }

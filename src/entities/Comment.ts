@@ -33,17 +33,17 @@ export interface IComment {
   createAt: Date;
 
   /**
-   * 给此回答点赞的用户
+   * 给此评论点赞的用户
    */
   upUserIds: Array<string>;
 
   /**
-   * 反对此回答的用户
+   * 反对此评论的用户
    */
   downUserIds: Array<string>;
 
   /**
-   * 是否是匿名用户回答
+   * 是否是匿名用户评论
    */
   isAnonymous: boolean;
 

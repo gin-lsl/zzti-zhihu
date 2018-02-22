@@ -92,18 +92,21 @@ export class UserService {
     if (!(currUser && toUser)) {
       return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
-    debug('打印已关注用户列表: ', currUser.hesFollowIds, ', 要关注的用户: ', toUser.id);
-    if (currUser.hesFollowIds.find(p => p === toUser.id)) {
+    debug('打印已关注用户列表: ', currUser.hisFollowIds, ', 要关注的用户: ', toUser.id);
+    if (currUser.hisFollowIds.find(p => p === toUser.id)) {
       debug('判断是否已存在');
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
       debug('更新关注用户列表');
-      currUser.hesFollowIds.push(toUser.id);
+      currUser.hisFollowIds.push(toUser.id);
       toUser.followHimIds.push(currUser.id);
       await currUser.save();
       await toUser.save();
-      return RequestResultUtil.createSuccess();
+      return RequestResultUtil.createSuccess({
+        currentUserId: currUser.id,
+        toUserId: toUser.id,
+      });
     } catch (e) {
       debug('保存出错: ', e);
       return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
@@ -113,12 +116,13 @@ export class UserService {
   /**
    * 取消关注用户
    *
-   * @param currUserId 当前用户的id
+   * @param currentUserId 当前用户的id
    * @param toUserId 要关注的用户的id
    */
-  public static async cancelFollow(currUserId: string, toUserId: string): Promise<void> {
-    await UserModel.findByIdAndUpdate(currUserId, { $pull: { hesFollow: toUserId } });
-    await UserModel.findByIdAndUpdate(toUserId, { $pull: { followHim: currUserId } });
+  public static async cancelFollow(currentUserId: string, toUserId: string): Promise<any> {
+    await UserModel.findByIdAndUpdate(currentUserId, { $pull: { hisFollowIds: toUserId } });
+    await UserModel.findByIdAndUpdate(toUserId, { $pull: { followHimIds: currentUserId } });
+    return { currentUserId, toUserId };
   }
 
   /**
@@ -130,21 +134,56 @@ export class UserService {
     const user = await UserModel.findById(userId);
     if (user) {
       // 只返回安全信息
-      const userInfo: any = {};
-      userInfo.id = user.id;
-      userInfo.email = user.email;
-      userInfo.avatar = user.avatar;
-      userInfo.gender = user.gender;
-      userInfo.hesFollow = user.hesFollowIds;
-      userInfo.lastLoginTime = user.lastLoginTime;
-      userInfo.logonTime = user.logonTime;
-      userInfo.profile = user.profile;
-      userInfo.lv = user.lv;
-      userInfo.username = user.username;
+      const userInfo: any = {
+        id: user.id,
+        email: user.email,
+        avatar: user.avatar,
+        gender: user.gender,
+        hisFollowIds: user.hisFollowIds,
+        followHimIds: user.followHimIds,
+        lastLoginTime: user.lastLoginTime,
+        logonTime: user.logonTime,
+        profile: user.profile,
+        lv: user.lv,
+        username: user.username,
+      };
       return RequestResultUtil.createSuccess(userInfo);
     } else {
       return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
+  }
+
+  /**
+   * 根据用户ID修改用户信息
+   *
+   * @param userId 用户ID
+   * @param user 新的用户信息
+   */
+  public static async modifyUser(userId: string, user: IUser & { id: string }): Promise<IServiceResult> {
+
+    debug('更新用户信息');
+    try {
+      const mod_user = await UserModel.findByIdAndUpdate(userId, {
+        username: user.username,
+        password: user.password,
+        profile: user.profile,
+      });
+      return RequestResultUtil.createSuccess({ id: mod_user.id });
+    } catch (error) {
+      debug(error);
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+  /**
+   * 修改用户头像
+   *
+   * @param userId 用户ID
+   * @param avatar 头像
+   */
+  public static async modifyUserAvatar(userId: string, avatar: any): Promise<IServiceResult> {
+
+    return;
   }
 
 }

@@ -61,7 +61,7 @@ export interface IUser {
   /**
    * 他关注的
    */
-  hesFollowIds: Array<string>;
+  hisFollowIds: Array<string>;
 
   /**
    * 他收藏的
@@ -91,7 +91,7 @@ export class User implements IUser {
   logonTime: Date;
   lastLoginTime: Date;
   followHimIds: string[];
-  hesFollowIds: string[];
+  hisFollowIds: string[];
   collectionQuestionIds: string[];
   salt: string;
 
@@ -110,7 +110,7 @@ export class User implements IUser {
       logonTime: Date,
       lastLoginTime: Date,
       followHimIds: [String],
-      hesFollowIds: [String],
+      hisFollowIds: [String],
       collectionQuestionIds: [String],
       salt: String,
     };

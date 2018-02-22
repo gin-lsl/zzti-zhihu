@@ -14,3 +14,8 @@ PowerShell:
 $env:DEBUG = 'zzti-zhihu:*'
 $env:env = 'development'
 ```
+
+输出调试信息到文件:
+```powershell
+npm start 2>debug.txt
+```

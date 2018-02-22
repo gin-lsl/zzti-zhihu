@@ -22,12 +22,18 @@ mongo();
 const app = new Koa();
 const router = new Router();
 
+// 打印日志
+app.use(async (ctx: Koa.Context, next: NextCallback) => {
+  debug('Resolve Request: ', ctx.path);
+  await next();
+});
+
 // 处理全局错误
 app.use(async (ctx: Koa.Context, next: NextCallback) => {
   try {
     await next();
   } catch (error) {
-    debug('未知错误: %O', error);
+    debug('UNDEFINED ERROR: %O', error);
     ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
   }
 });

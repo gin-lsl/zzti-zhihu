@@ -11,6 +11,9 @@ dist-temp*
 Mail.config.ts
 Mongo.config.ts
 
+# 系统日志
+debug.txt
+
 # Runtime data
 pids
 *.pid

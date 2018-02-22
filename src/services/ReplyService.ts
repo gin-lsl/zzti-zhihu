@@ -1,7 +1,7 @@
 import * as Debug from 'debug';
 import { IReply } from '../entities/index';
 import { IServiceResult } from '../interfaces/index';
-import { ReplyModel } from '../models/index';
+import { ReplyModel, QuestionModel, UserModel } from '../models/index';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
 import { UserService } from './index';
 
@@ -68,7 +68,7 @@ export class ReplyService {
         }
       });
       const result = rs.map(r => ({
-        id: r._id,
+        id: r.id,
         questionId: r.questionId,
         content: r.content,
         createAt: r.createAt,
@@ -77,6 +77,27 @@ export class ReplyService {
         user: _userEntity[r.userId],
       }));
       return RequestResultUtil.createSuccess(result);
+    } catch (error) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+  /**
+   * 获取指定用户发布的回复
+   *
+   * @param userId 用户ID
+   */
+  public static async getRepliesByUserId(userId: string): Promise<IServiceResult> {
+    try {
+      const rs = await ReplyModel.find().where('userId', userId).exec();
+      return RequestResultUtil.createSuccess(rs.map(r => ({
+        id: r.id,
+        questionId: r.questionId,
+        content: r.content,
+        createAt: r.createAt,
+        updateAt: r.updateAt,
+        userId: r.userId,
+      })));
     } catch (error) {
       return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }

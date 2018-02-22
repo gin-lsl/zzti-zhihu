@@ -7,7 +7,7 @@ import { RegexToolsUtil, StringUtils, createJWT, verifyJWT, sendActiveMail } fro
 import { NextCallback } from '../types/index';
 import { UserProxy } from '../proxy/index';
 import { AppConfig } from '../config/index';
-import { QuestionService } from '../services/index';
+import { QuestionService, ReplyService } from '../services/index';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -33,19 +33,17 @@ export class UserController {
     if (!id || id.length !== 24) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
-    const postedQuestions = await QuestionService.getUserPosted(id);
     const base = await UserService.getUserInfoById(id);
-    if (postedQuestions.success && base.success) {
-      ctx.body = RequestResultUtil.createSuccess({
-        base: base.successResult,
-        postedQuestions: postedQuestions.successResult,
-      });
+    const postedQuestions = await QuestionService.getUserPosted(id);
+    const postedReplies = await ReplyService.getRepliesByUserId(id);
+    if (!base.success) {
+      return ctx.body = base;
     }
-    // ctx.body = {
-    //   base,
-    //   postedQuestions
-    // };
-    // ctx.body = await UserService.getUserInfoById(id);
+    ctx.body = RequestResultUtil.createSuccess({
+      base: base.successResult,
+      postedQuestions: postedQuestions.success ? postedQuestions.successResult : [],
+      postedReplies: postedReplies ? postedReplies.successResult : [],
+    });
   }
 
   /**
@@ -252,10 +250,23 @@ export class UserController {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
     }
     try {
-      await UserService.cancelFollow(uid, id);
-      return ctx.body = RequestResultUtil.createSuccess();
-    } catch (e) {
+      const result = await UserService.cancelFollow(uid, id);
+      return ctx.body = RequestResultUtil.createSuccess(result);
+    } catch (error) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }
+  }
+
+  /**
+   * 修改用户信息
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async modifyUser(ctx: Context, next: NextCallback): Promise<any> {
+
+    debug('修改用户信息');
+    const userId = ctx.state.currentUser.uid;
+    return ctx.body = await UserService.modifyUser(userId, ctx.request.body);
   }
 }

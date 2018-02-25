@@ -4,6 +4,7 @@ import { verifyObjectIdMiddleware } from '../middleware/index';
 
 const router = new Router();
 
+router.get('/search/more-like-this', QuestionController.moreLikeThis);
 router.get('/collect/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.collect);
 router.get('/cancel-collect/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.cancelCollect);
 router.get('/up/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.up);
@@ -14,7 +15,7 @@ router.get('/like/:id', verifyObjectIdMiddleware, UserController.verifyJwt, Ques
 router.get('/unlike/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.unLike);
 router.get('/search', QuestionController.search);
 router.get('/:id', verifyObjectIdMiddleware, QuestionController.getById);
-router.get('/', QuestionController.getAll);
+router.get('/', QuestionController.getMany);
 
 router.post('/post', UserController.verifyJwt, QuestionController.postTopic);
 

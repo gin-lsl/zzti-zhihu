@@ -4,8 +4,14 @@ import * as Debug from 'debug';
 import { IQuestion } from "../entities/index";
 import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
 import { NextCallback } from "../types/index";
+import * as elasticsearch from 'elasticsearch';
 
 const debug = Debug('zzti-zhihu:controller:question');
+
+const client = new elasticsearch.Client({
+  host: 'localhost:9200',
+  log: 'trace',
+});
 
 /**
  * QuestionController
@@ -170,9 +176,21 @@ export class QuestionController {
    */
   public static async getAll(ctx: Context, next: NextCallback): Promise<any> {
     debug('获取所有问题: ', ctx.query);
-    const limit = +ctx.query.limit;
-    const questions = await QuestionService.getAll(+limit);
+    const questions = await QuestionService.getAll();
     return ctx.body = RequestResultUtil.createSuccess(questions);
+  }
+
+  /**
+   * 获取一些问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async getMany(ctx: Context, next: NextCallback): Promise<any> {
+    debug('获取一些Questions');
+    const count = +(ctx.query.count || 0);
+    const questions = await QuestionService.getMany(count);
+    ctx.body = RequestResultUtil.createSuccess(questions);
   }
 
   /**
@@ -196,4 +214,24 @@ export class QuestionController {
   public static async search(ctx: Context, next: NextCallback): Promise<any> {
     return ctx.body = await QuestionService.search(ctx.query.search);
   }
+
+  public static async moreLikeThis(ctx: Context, next: NextCallback): Promise<any> {
+    const response = await client.search({
+      index: 'zzti_zhihu',
+      body: {
+        query: {
+          more_like_this: {
+            fields: ['title'],
+            like: '请问这是什么动画中的截图?',
+            min_doc_freq: 0,
+            min_word_len: 0,
+            min_term_freq: 0
+          }
+        }
+      }
+    });
+    debug('请求结果: %O', response);
+    ctx.body = RequestResultUtil.createSuccess(response);
+  }
 }
+

@@ -7,6 +7,7 @@ import * as Cors from '@koa/cors';
 import { mongo } from './config/index';
 import { NextCallback } from './types/index';
 import { RequestResultUtil, ErrorCodeEnum } from './apiStatus/index';
+import * as KoaMulter from 'koa-multer';
 
 const debug = Debug('zzti-zhihu:app');
 
@@ -14,6 +15,13 @@ const cors = Cors({
   origin: '*',
   allowMethods: '*',
   allowHeaders: ['content-type', 'authorization', '*'],
+});
+
+const storage = KoaMulter({
+  dest: __dirname + '/../upload',
+  fileFilter: (req, file, cb) => {
+    cb(null, true);
+  }
 });
 
 // 连接MongoDB数据库

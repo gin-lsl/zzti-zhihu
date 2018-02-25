@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 /**
  * JWT 密钥
  */
@@ -17,6 +19,11 @@ const EXPIRES_IN__SIGN: string = '24h';
  * JWT 账户激活过期时间
  */
 const EXPIRES_IN__ACTIVE: string = '1h';
+
+/**
+ * 用户头像保存地址
+ */
+const USER_AVATAR_PATH = path.join(__dirname, '..', 'static', 'avatars');
 
 /**
  * 应用配置
@@ -42,6 +49,11 @@ export const AppConfig = {
    * JWT 账户激活过期时间
    */
   EXPIRES_IN__ACTIVE,
+
+  /**
+   * 用户头像保存地址
+   */
+  USER_AVATAR_PATH,
 
 };
 

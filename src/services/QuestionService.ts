@@ -198,11 +198,18 @@ export class QuestionService {
 
   /**
    * 获取所有问题
-   *
-   * @param limit 数量限制, 默认20条
    */
-  public static async getAll(limit: number = 20): Promise<IQuestionDocument[]> {
-    return await QuestionModel.find().limit(limit);
+  public static async getAll(): Promise<IQuestionDocument[]> {
+    return await QuestionModel.find();
+  }
+
+  /**
+   * 过去一些Questions
+   *
+   * @param count 页面中已有的
+   */
+  public static async getMany(count: number = 0): Promise<IQuestionDocument[]> {
+    return await QuestionModel.find().skip(count).limit(10).exec();
   }
 
   /**

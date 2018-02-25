@@ -1,4 +1,3 @@
-import * as Debug from 'debug';
 import { Context } from 'koa';
 import { UserService } from '../services/UserService';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
@@ -8,6 +7,9 @@ import { NextCallback } from '../types/index';
 import { UserProxy } from '../proxy/index';
 import { AppConfig } from '../config/index';
 import { QuestionService, ReplyService } from '../services/index';
+import * as path from 'path';
+import * as Debug from 'debug';
+import { rename } from 'fs';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -268,5 +270,42 @@ export class UserController {
     debug('修改用户信息');
     const userId = ctx.state.currentUser.uid;
     return ctx.body = await UserService.modifyUser(userId, ctx.request.body);
+  }
+
+  /**
+   * 修改用户头像
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async modifyAvatar(ctx: Context, next: NextCallback): Promise<any> {
+    debug('修改用户头像');
+    const uid = ctx.state.currentUser.uid;
+
+    return new Promise((resolve, reject) => {
+      try {
+        const filename: string = ctx.req['file'].filename;
+        debug('文件名: ', filename);
+        const splited = filename.split('.');
+        const suffix = splited[splited.length - 1];
+        if (!/^jpg|jpeg|png$/i.test(suffix)) {
+          reject('不支持的文件格式');
+        }
+        const newFile = uid + '.' + suffix;
+        rename(path.join(AppConfig.USER_AVATAR_PATH, filename),
+          path.join(AppConfig.USER_AVATAR_PATH, newFile), (error) => {
+            if (error) {
+              reject(error);
+            } else {
+              ctx.body = RequestResultUtil.createSuccess({
+                avatar: newFile,
+              });
+              resolve();
+            }
+          });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

@@ -21,9 +21,14 @@ const EXPIRES_IN__SIGN: string = '24h';
 const EXPIRES_IN__ACTIVE: string = '1h';
 
 /**
- * 用户头像保存地址
+ * 用户头像保存路径
  */
-const USER_AVATAR_PATH = path.join(__dirname, '..', 'static', 'avatars');
+const USER_AVATAR_PATH = path.join(__dirname, '..', 'static', 'avatar');
+
+/**
+ * 静态资源目录
+ */
+const STATIC_PATH = path.join(__dirname, '..', 'static');
 
 /**
  * 应用配置
@@ -51,9 +56,14 @@ export const AppConfig = {
   EXPIRES_IN__ACTIVE,
 
   /**
-   * 用户头像保存地址
+   * 用户头像保存路径
    */
   USER_AVATAR_PATH,
+
+  /**
+   * 静态资源目录
+   */
+  STATIC_PATH,
 
 };
 

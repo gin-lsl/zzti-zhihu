@@ -28,8 +28,6 @@ const fetchArticles = (uri) => {
     $('#questions .question-summary').each((i, q) => {
       const $self = $(q)
       $title = $self.find('.question-link')
-      // debug('title: ', $title.text());
-      // debug('href: ', $title.attr('href'))
       const href = $title.attr('href');
       const id = href.match(/\d{5,}/)[0]
       request(HOST + href, (error1, res1) => {
@@ -51,7 +49,7 @@ const fetchArticles = (uri) => {
                            </div>`
 
         // 标签
-        const _$tags = _$article('.q-tag')
+        const _$tags = _$article('.tags').find('.q-tag')
         const _tags = []
         _$tags.each((i, g) => {
           _tags.push(_$article(g).text())
@@ -104,8 +102,7 @@ const fetchArticles = (uri) => {
     // 下一个页面
     const $next = $('a.next')
     if ($next.hasClass('disable')) {
-      // debug('结果: ', results)
-
+      debug('抓取完毕')
       return;
     }
     fetchArticles(HOST + $next.attr('href'))

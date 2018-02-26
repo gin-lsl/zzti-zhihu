@@ -181,9 +181,8 @@ export class UserService {
    * @param userId 用户ID
    * @param avatar 头像
    */
-  public static async modifyUserAvatar(userId: string, avatar: any): Promise<IServiceResult> {
-
-    return;
+  public static async modifyUserAvatar(userId: string, avatar: any): Promise<void> {
+    await UserModel.findByIdAndUpdate(userId, { avatar });
   }
 
 }

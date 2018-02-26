@@ -2,26 +2,20 @@ import * as Debug from 'debug';
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as Router from 'koa-router';
-import routes from './routes';
 import * as Cors from '@koa/cors';
-import { mongo } from './config/index';
+import * as KoaSend from 'koa-send';
+import routes from './routes';
+import { mongo, AppConfig } from './config/index';
 import { NextCallback } from './types/index';
 import { RequestResultUtil, ErrorCodeEnum } from './apiStatus/index';
-import * as KoaMulter from 'koa-multer';
 
 const debug = Debug('zzti-zhihu:app');
 
+// 跨域配置
 const cors = Cors({
   origin: '*',
   allowMethods: '*',
   allowHeaders: ['content-type', 'authorization', '*'],
-});
-
-const storage = KoaMulter({
-  dest: __dirname + '/../upload',
-  fileFilter: (req, file, cb) => {
-    cb(null, true);
-  }
 });
 
 // 连接MongoDB数据库
@@ -48,6 +42,13 @@ app.use(async (ctx: Koa.Context, next: NextCallback) => {
 
 // 跨域
 app.use(cors);
+
+// 静态资源
+// app.use(async (ctx) => {
+//   await KoaSend(ctx, ctx.path, {
+//     root: AppConfig.STATIC_PATH,
+//   });
+// });
 
 // 请求体解析
 app.use(bodyParser());

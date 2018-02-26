@@ -215,14 +215,30 @@ export class QuestionController {
     return ctx.body = await QuestionService.search(ctx.query.search);
   }
 
+  /**
+   * 相似结果
+   *
+   * @param ctx ctx
+   * @param next next
+   */
   public static async moreLikeThis(ctx: Context, next: NextCallback): Promise<any> {
+
+    debug('获取相似的问题');
+    const like = ctx.query.like;
+    const excludeId = ctx.query.excludeId;
+
+    if (!like) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.MISSING__PARAMETERS);
+    }
+
+    // 获取
     const response = await client.search({
       index: 'zzti_zhihu',
       body: {
         query: {
           more_like_this: {
             fields: ['title'],
-            like: '请问这是什么动画中的截图?',
+            like: like,
             min_doc_freq: 0,
             min_word_len: 0,
             min_term_freq: 0
@@ -230,8 +246,31 @@ export class QuestionController {
         }
       }
     });
-    debug('请求结果: %O', response);
-    ctx.body = RequestResultUtil.createSuccess(response);
+
+    // 过滤
+    let i = 0;
+    let result = [];
+    const hits = response.hits.hits;
+    let len = hits.length;
+    if (hits && hits.length === 0) {
+      return ctx.body = RequestResultUtil.createSuccess([]);
+    }
+    while (i < len && i < 10) {
+      if (hits[i]._id !== excludeId) {
+        result.push(hits[i]);
+        ++i;
+      } else {
+        hits.shift();
+        --len;
+      }
+    }
+    if (result.length) {
+      result = result.map(r => ({
+        id: r._id,
+        title: r._source.title,
+      }));
+    }
+    ctx.body = RequestResultUtil.createSuccess(result);
   }
 }
 

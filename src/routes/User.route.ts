@@ -25,6 +25,7 @@ const upload = KoaMulter({
 router.get('/active', UserController.activeAccount);
 router.get('/follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.follow);
 router.get('/cancel-follow/:id', verifyObjectIdMiddleware, UserController.verifyJwt, UserController.cancelFollow);
+router.get('/avatar/:path', UserController.getAvatar);
 // router.get('/testjwt', UserController.verifyJwt, async (ctx, next) => {
 //   ctx.body = ctx.state;
 // });

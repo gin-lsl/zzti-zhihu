@@ -1,3 +1,7 @@
+import * as path from 'path';
+import * as Debug from 'debug';
+import * as KoaSend from 'koa-send';
+import { rename } from 'fs';
 import { Context } from 'koa';
 import { UserService } from '../services/UserService';
 import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
@@ -7,9 +11,6 @@ import { NextCallback } from '../types/index';
 import { UserProxy } from '../proxy/index';
 import { AppConfig } from '../config/index';
 import { QuestionService, ReplyService } from '../services/index';
-import * as path from 'path';
-import * as Debug from 'debug';
-import { rename } from 'fs';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -293,10 +294,11 @@ export class UserController {
         }
         const newFile = uid + '.' + suffix;
         rename(path.join(AppConfig.USER_AVATAR_PATH, filename),
-          path.join(AppConfig.USER_AVATAR_PATH, newFile), (error) => {
+          path.join(AppConfig.USER_AVATAR_PATH, newFile), async (error) => {
             if (error) {
               reject(error);
             } else {
+              await UserService.modifyUserAvatar(uid, newFile);
               ctx.body = RequestResultUtil.createSuccess({
                 avatar: newFile,
               });
@@ -306,6 +308,19 @@ export class UserController {
       } catch (error) {
         reject(error);
       }
+    });
+  }
+
+  /**
+   * 处理用户头像路径
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async getAvatar(ctx: Context, next: NextCallback): Promise<any> {
+    const _path = ctx.path;
+    await KoaSend(ctx, _path.replace('/users', ''), {
+      root: AppConfig.STATIC_PATH,
     });
   }
 }

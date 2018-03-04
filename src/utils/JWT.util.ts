@@ -43,6 +43,7 @@ export const createJWT = (
  */
 export const verifyJWT = <T = any>(jwt: string, secretKey: string = AppConfig.JWT_SECRET__SIGN): Promise<T | null> => {
 
+  debug('校验JWT');
   return new Promise((resolve, reject) => {
     verify(jwt, secretKey, (error, result) => {
       debug('error: ', error);

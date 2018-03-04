@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * JWT 密钥
@@ -29,6 +30,15 @@ const USER_AVATAR_PATH = path.join(__dirname, '..', 'static', 'avatar');
  * 静态资源目录
  */
 const STATIC_PATH = path.join(__dirname, '..', 'static');
+
+// 生成目录
+if (!fs.existsSync(STATIC_PATH)) {
+  fs.mkdirSync(STATIC_PATH);
+}
+
+if (!fs.existsSync(USER_AVATAR_PATH)) {
+  fs.mkdirSync(USER_AVATAR_PATH);
+}
 
 /**
  * 应用配置
@@ -65,6 +75,63 @@ export const AppConfig = {
    */
   STATIC_PATH,
 
+};
+
+/**
+ * 数据库配置
+ */
+export const DB = {
+
+  development: {
+
+    /**
+     * 数据库名称
+     */
+    dbName: 'zzti_zhihu',
+
+    /**
+     * 数据库HOST
+     */
+    dbHost: '127.0.0.1:27017',
+
+  },
+
+  production: {
+
+    dbName: 'zzti_zhihu',
+
+    dbHost: '127.0.0.1:27017'
+  }
+
+};
+
+/**
+ * ElasticSearch 配置
+ */
+export const ES = {
+
+  /**
+   * Development 环境下的ES配置
+   */
+  development: {
+    host: 'localhost:9200',
+    log: 'trace',
+  },
+
+  /**
+   * Production 环境下的ES配置
+   */
+  production: {
+    host: 'localhost:9200',
+    log: 'trace',
+  },
+
+  /**
+   * ES索引信息
+   */
+  index: {
+    name: 'zzti_zhihu',
+  }
 };
 
 /**

@@ -129,9 +129,29 @@ export class UserService {
    * 通过id获取用户信息
    *
    * @param userId 用户id
+   * @param hasAuth 是否有权限
    */
-  public static async getUserInfoById(userId: string): Promise<IServiceResult<IUser & { id: string }>> {
+  public static async getUserInfoById(userId: string, hasAuth: boolean = false): Promise<IServiceResult<IUser & { id: string }>> {
     const user = await UserModel.findById(userId);
+    const relateUserIds = [...new Set([...user.followHimIds, ...user.hisFollowIds])];
+    const promises = relateUserIds.map(_ => UserModel.findById(_));
+    const users = await Promise.all(promises);
+    const _userEntity = {} as any;
+    users.forEach(u => {
+      _userEntity[u._id] = {
+        id: u.id,
+        email: u.email,
+        avatar: u.avatar,
+        gender: u.gender,
+        hisFollowCount: u.hisFollowIds.length,
+        followHimCount: u.followHimIds.length,
+        lastLoginTime: u.lastLoginTime,
+        logonTime: u.logonTime,
+        profile: u.profile,
+        lv: u.lv,
+        username: u.username,
+      };
+    });
     if (user) {
       // 只返回安全信息
       const userInfo: any = {
@@ -139,13 +159,14 @@ export class UserService {
         email: user.email,
         avatar: user.avatar,
         gender: user.gender,
-        hisFollowIds: user.hisFollowIds,
-        followHimIds: user.followHimIds,
+        hisFollowUsers: user.hisFollowIds.map(h => _userEntity[h]),
+        followHimUsers: user.followHimIds.map(f => _userEntity[f]),
         lastLoginTime: user.lastLoginTime,
         logonTime: user.logonTime,
         profile: user.profile,
         lv: user.lv,
         username: user.username,
+        collect: user.collectionQuestionIds,
       };
       return RequestResultUtil.createSuccess(userInfo);
     } else {

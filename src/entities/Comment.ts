@@ -55,6 +55,7 @@ export interface IComment {
  * @author lsl
  */
 export class Comment implements IComment {
+  id: string;
   content: string;
   questionId: string;
   replyId?: string;

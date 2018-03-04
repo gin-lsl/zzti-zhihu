@@ -86,8 +86,9 @@ export class ReplyService {
    * 获取指定用户发布的回复
    *
    * @param userId 用户ID
+   * @param hasAuth 是否有病权限
    */
-  public static async getRepliesByUserId(userId: string): Promise<IServiceResult> {
+  public static async getRepliesByUserId(userId: string, hasAuth: boolean = false): Promise<IServiceResult> {
     try {
       const rs = await ReplyModel.find().where('userId', userId).exec();
       return RequestResultUtil.createSuccess(rs.map(r => ({

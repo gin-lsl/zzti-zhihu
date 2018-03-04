@@ -56,6 +56,11 @@ export interface IQuestion {
    * 是否是匿名用户提问
    */
   isAnonymous: boolean;
+
+  /**
+   * 访问次数
+   */
+  lookCount: number;
 }
 
 /**
@@ -64,6 +69,7 @@ export interface IQuestion {
  * @author lsl
  */
 export class Question implements IQuestion {
+  id: string;
   title: string;
   description: string;
   userId: string;
@@ -74,6 +80,7 @@ export class Question implements IQuestion {
   downUserIds: string[];
   saveUserIds: string[];
   isAnonymous: boolean;
+  lookCount: number;
 
   /**
    * 生成mongoose模式定义对象
@@ -90,6 +97,7 @@ export class Question implements IQuestion {
       downUserIds: [String],
       saveUserIds: [String],
       isAnonymous: Boolean,
+      lookCount: Number,
     };
   }
 }

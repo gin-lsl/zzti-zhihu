@@ -72,6 +72,16 @@ export interface IUser {
    * 加盐值
    */
   salt: string;
+
+  /**
+   * 赞同人数
+   */
+  upCount: number;
+
+  /**
+   * 收藏人数
+   */
+  saveCount: number;
 }
 
 
@@ -81,6 +91,7 @@ export interface IUser {
  * @author lsl
  */
 export class User implements IUser {
+  id: string;
   email: string;
   username: string;
   password: string;
@@ -94,6 +105,8 @@ export class User implements IUser {
   hisFollowIds: string[];
   collectionQuestionIds: string[];
   salt: string;
+  upCount: number;
+  saveCount: number;
 
   /**
    * 生成mongoose模式定义对象
@@ -113,6 +126,8 @@ export class User implements IUser {
       hisFollowIds: [String],
       collectionQuestionIds: [String],
       salt: String,
+      upCount: Number,
+      saveCount: Number,
     };
   }
 }

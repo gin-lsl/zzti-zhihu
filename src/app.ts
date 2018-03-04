@@ -36,7 +36,14 @@ app.use(async (ctx: Koa.Context, next: NextCallback) => {
     await next();
   } catch (error) {
     debug('UNDEFINED ERROR: %O', error);
-    ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    if (typeof error === 'string' && error.startsWith('#___ZZTI___')) {
+      ctx.body = RequestResultUtil.createError(error as ErrorCodeEnum);
+    } else {
+      if (typeof error === 'object' && error.errorCode) {
+        return ctx.body = error;
+      }
+      ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
   }
 });
 

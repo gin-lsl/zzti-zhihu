@@ -1,21 +1,15 @@
-const env = process.env;
-const dbName: string = 'zzti_zhihu';
+import { DB } from './App.config';
 
 const connConfig = {
   development: {
-    connectionString: `mongodb://127.0.0.1:27017/${dbName}`
+    connectionString: `mongodb://${DB.development.dbHost}/${DB.development.dbName}`
   },
   production: {
-    connectionString: `mongodb://${env.url}`
+    connectionString: `mongodb://${DB.production.dbHost}/${DB.production.dbName}`
   }
 };
 
 export class MongoConfig {
-
-  /**
-   * 数据库名
-   */
-  public static dbName: string = `${dbName}`;
 
   /**
    * 获取Mongo连接信息

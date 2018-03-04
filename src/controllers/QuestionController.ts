@@ -4,14 +4,9 @@ import * as Debug from 'debug';
 import { IQuestion } from "../entities/index";
 import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
 import { NextCallback } from "../types/index";
-import * as elasticsearch from 'elasticsearch';
+import { esClient, ES } from "../config";
 
 const debug = Debug('zzti-zhihu:controller:question');
-
-const client = new elasticsearch.Client({
-  host: 'localhost:9200',
-  log: 'trace',
-});
 
 /**
  * QuestionController
@@ -232,8 +227,8 @@ export class QuestionController {
     }
 
     // 获取
-    const response = await client.search({
-      index: 'zzti_zhihu',
+    const response = await esClient.search({
+      index: ES.index.name,
       body: {
         query: {
           more_like_this: {

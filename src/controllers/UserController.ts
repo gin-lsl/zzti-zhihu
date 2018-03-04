@@ -32,13 +32,23 @@ export class UserController {
     // 获取Authorizaion头信息, 以便确认是否传回隐私性的信息
     const authorization = ctx.get('Authorization');
 
+    let hasAuth = false;
+    try {
+      const user = await verifyJWT(authorization);
+      hasAuth = true;
+    } catch (error) {
+      hasAuth = false;
+    }
+
     const { id } = ctx.state.params;
     if (!id || id.length !== 24) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
     }
-    const base = await UserService.getUserInfoById(id);
-    const postedQuestions = await QuestionService.getUserPosted(id);
+    const base = await UserService.getUserInfoById(id, hasAuth);
+    const postedQuestions = await QuestionService.getUserPosted(id, hasAuth);
+    const savedQuestions = await QuestionService.getUserSaved(id);
     const postedReplies = await ReplyService.getRepliesByUserId(id);
+
     if (!base.success) {
       return ctx.body = base;
     }
@@ -46,6 +56,7 @@ export class UserController {
       base: base.successResult,
       postedQuestions: postedQuestions.success ? postedQuestions.successResult : [],
       postedReplies: postedReplies ? postedReplies.successResult : [],
+      savedQuestions: savedQuestions,
     });
   }
 
@@ -95,15 +106,17 @@ export class UserController {
     }
     // 邮箱不合法
     if (!RegexToolsUtil.validEmail(email)) {
-      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_ILLEGAL);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_ILLEGAL, '邮箱格式不正确');
     }
     // 邮箱已存在
     const emailExist = await UserService.checkEmailExist(email);
     if (emailExist) {
-      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST);
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__EMAIL_EXIST, '邮箱已存在');
     }
     const access_token = await createJWT({ eml: email, tmp: Date.now() }, AppConfig.JWT_SECRET__ACTIVE, AppConfig.EXPIRES_IN__ACTIVE);
+    // 如果发送邮件,则直接提示点击邮箱中的链接激活,否则直接在页面上提示激活
     // sendActiveMail(email, access_token, email);
+    // #___ZZTI___
     ctx.body = RequestResultUtil.createSuccess(access_token);
   }
 
@@ -269,8 +282,27 @@ export class UserController {
   public static async modifyUser(ctx: Context, next: NextCallback): Promise<any> {
 
     debug('修改用户信息');
+
+    const newInfo = ctx.request.body;
+
+    if (StringUtils.hasEmpty([newInfo.username, newInfo.password, newInfo.passwordRepeat], 3)) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.MISSING__PARAMETERS, '缺少参数');
+    }
+    // 密码太短
+    if (newInfo.password.length < 6) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__PASSWORD_ERROR, '密码长短不能小于6位');
+    }
+    // 密码太简单
+    if (RegexToolsUtil.pureNumber(newInfo.password)) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '密码不能为纯数字');
+    }
+    // 两次输入的密码不一致
+    if (newInfo.password !== newInfo.passwordRepeat) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGON_ERROR__PASSWORD_ERROR, '两次输入的密码不一致');
+    }
+
     const userId = ctx.state.currentUser.uid;
-    return ctx.body = await UserService.modifyUser(userId, ctx.request.body);
+    return ctx.body = await UserService.modifyUser(userId, newInfo);
   }
 
   /**

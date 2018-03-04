@@ -56,6 +56,7 @@ export interface IReply {
  * @author lsl
  */
 export class Reply implements IReply {
+  id: string;
   content: string;
   questionId: string;
   userId: string;

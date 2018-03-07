@@ -1,8 +1,8 @@
-import { Context } from "koa";
+import { Context } from 'koa';
+import { IReply } from '../entities/index';
+import { NextCallback } from '../types/index';
+import { ReplyService } from '../services/index';
 import * as Debug from 'debug';
-import { IReply } from "../entities/index";
-import { NextCallback } from "../types/index";
-import { ReplyService } from "../services/index";
 
 const debug = Debug('zzti-zhihu:controller:reply');
 

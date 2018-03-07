@@ -5,7 +5,7 @@ import { IUserDocument } from '../schemas/IUserDocument';
 import { IServiceResult } from '../interfaces/index';
 import { ErrorCodeEnum, RequestResultUtil } from '../apiStatus/index';
 import { UserDTO } from '../dto/index';
-import { IUser } from '../entities/index';
+import { IUser, User } from '../entities/index';
 const debug = Debug('zzti-zhihu:service:user');
 
 /**
@@ -123,6 +123,14 @@ export class UserService {
     await UserModel.findByIdAndUpdate(currentUserId, { $pull: { hisFollowIds: toUserId } });
     await UserModel.findByIdAndUpdate(toUserId, { $pull: { followHimIds: currentUserId } });
     return { currentUserId, toUserId };
+  }
+
+  /**
+   * 获取用户信息
+   * @param userId 用户ID
+   */
+  public static async get(userId: string): Promise<User> {
+    return await UserModel.findById(userId) as User;
   }
 
   /**

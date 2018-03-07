@@ -1,10 +1,12 @@
-import { IQuestionDocument, IUserDocument } from "../schemas/index";
-import { QuestionModel, UserModel } from "../models/index";
+import { IQuestionDocument, IUserDocument } from '../schemas/index';
+import { QuestionModel, UserModel, MessageModel } from '../models/index';
+import { Question, IQuestion, IUser, Message } from '../entities/index';
+import { RequestResultUtil, ErrorCodeEnum, MessageTypeEnum } from '../apiStatus/index';
+import { IServiceResult } from '../interfaces/index';
+import { esClient, DB, ES } from '../config';
 import * as Debug from 'debug';
-import { Question, IQuestion, IUser } from "../entities/index";
-import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
-import { IServiceResult } from "../interfaces/index";
-import { esClient, DB, ES } from "../config";
+import { MessageService } from './MessageService';
+import { UserService } from '.';
 
 const debug = Debug('zzti-zhihu:service:question');
 
@@ -21,10 +23,13 @@ export class QuestionService {
    * @param question 问题信息
    * @param userId 用户id
    */
-  public static async postQuestion(question: IQuestion, userId: string): Promise<IServiceResult> {
-    let saveResult;
+  public static async save(question: IQuestion, userId: string): Promise<IServiceResult> {
+    let saveResult: IQuestionDocument;
     try {
       saveResult = await new QuestionModel({ ...question, userId, createAt: new Date(), lookCount: 0 }).save();
+      const user = await UserModel.findById(userId);
+      const messages = user.followHimIds.map(_ => new Message(MessageTypeEnum.FOLLOWED_USER_CREATE_QUESTION, userId, _, saveResult.id));
+      await MessageModel.create(messages);
       return RequestResultUtil.createSuccess(saveResult.id);
     } catch (error) {
       return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
@@ -104,6 +109,7 @@ export class QuestionService {
       });
       question.upUserIds.push(user.id);
       await question.save();
+      await MessageService.save(new Message(MessageTypeEnum.USER_UP_MY_QUESTION, userId, question.userId, question.id));
       return RequestResultUtil.createSuccess();
     } catch (error) {
       debug('点赞发生错误: %O', error);
@@ -193,7 +199,7 @@ export class QuestionService {
       return RequestResultUtil.createError(ErrorCodeEnum.OPERATION_DUPLICATION);
     }
     try {
-      UserModel.findByIdAndUpdate(question.userId, {
+      await UserModel.findByIdAndUpdate(question.userId, {
         $inc: {
           saveCount: 1,
         }
@@ -202,6 +208,7 @@ export class QuestionService {
       question.saveUserIds.push(user.id);
       await user.save();
       await question.save();
+      await MessageService.save(new Message(MessageTypeEnum.USER_LIKE_MY_QUESTION, userId, question.userId, question.id));
       return RequestResultUtil.createSuccess();
     } catch (error) {
       debug('收藏发生错误');

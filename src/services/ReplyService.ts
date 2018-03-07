@@ -1,9 +1,10 @@
 import * as Debug from 'debug';
-import { IReply } from '../entities/index';
+import { IReply, Message } from '../entities/index';
 import { IServiceResult } from '../interfaces/index';
-import { ReplyModel, QuestionModel, UserModel } from '../models/index';
-import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
+import { ReplyModel, QuestionModel, UserModel, MessageModel } from '../models/index';
+import { RequestResultUtil, ErrorCodeEnum, MessageTypeEnum } from '../apiStatus/index';
 import { UserService } from './index';
+import { MessageService } from './MessageService';
 
 const debug = Debug('zzti-zhihu:service:reply');
 
@@ -30,7 +31,13 @@ export class ReplyService {
         createAt: new Date()
       }).save();
       const userRes = await UserService.getUserInfoById(userId);
+      const question = await QuestionModel.findById(questionId);
       const user = userRes.success ? userRes.successResult : {};
+      // 消息
+      const messageQuestionUserId = new Message(MessageTypeEnum.USER_REPLY_MY_QUESTION, userId, question.userId, questionId);
+      const messagesFollowHim = userRes.successResult.followHimIds
+        .map(_ => new Message(MessageTypeEnum.FOLLOWED_USER_CREATE_REPLY, userId, _, questionId));
+      await MessageModel.create([...messagesFollowHim, messageQuestionUserId]);
       return RequestResultUtil.createSuccess({
         id: saveResult.id,
         questionId: saveResult.questionId,

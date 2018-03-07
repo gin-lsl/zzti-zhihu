@@ -1,10 +1,10 @@
-import { Context } from "koa";
-import { QuestionService } from "../services/QuestionService";
+import { Context } from 'koa';
+import { QuestionService } from '../services/QuestionService';
+import { IQuestion } from '../entities/index';
+import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
+import { NextCallback } from '../types/index';
+import { esClient, ES } from '../config';
 import * as Debug from 'debug';
-import { IQuestion } from "../entities/index";
-import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
-import { NextCallback } from "../types/index";
-import { esClient, ES } from "../config";
 
 const debug = Debug('zzti-zhihu:controller:question');
 
@@ -27,7 +27,7 @@ export class QuestionController {
     const question = ctx.request.body as IQuestion;
     question.userId = ctx.state.currentUser.uid;
     debug('question: %O', question);
-    ctx.body = await QuestionService.postQuestion(ctx.request.body, ctx.state.currentUser.uid);
+    ctx.body = await QuestionService.save(ctx.request.body, ctx.state.currentUser.uid);
   }
 
   /**

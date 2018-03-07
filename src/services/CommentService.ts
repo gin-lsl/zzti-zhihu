@@ -1,8 +1,8 @@
-import { CommentModel } from "../models/index";
-import { IComment } from "../entities/index";
-import { UserService } from "./index";
-import { RequestResultUtil, ErrorCodeEnum } from "../apiStatus/index";
-import { IServiceResult } from "../interfaces/index";
+import { CommentModel } from '../models/index';
+import { IComment } from '../entities/index';
+import { UserService } from './index';
+import { RequestResultUtil, ErrorCodeEnum } from '../apiStatus/index';
+import { IServiceResult } from '../interfaces/index';
 
 /**
  * CommentService

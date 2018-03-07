@@ -6,6 +6,7 @@ import HomeRoute from './Home.route';
 import TopicRoute from './Topic.route';
 import QuestionRoute from './Question.route';
 import ReplyRoute from './Reply.route';
+import MessageRoute from './Message.route';
 
 const router = new Router();
 
@@ -14,6 +15,7 @@ router.use('/users', UserRoute.routes());
 router.use('/questions', QuestionRoute.routes());
 router.use('/replies', ReplyRoute.routes());
 router.use('/comments', CommentRoute.routes());
+router.use('/messages', MessageRoute.routes());
 // router.use('/', HomeRoute.routes());
 
 export default router;

@@ -1,8 +1,8 @@
-import { Context } from "koa";
-import { NextCallback } from "../types/index";
+import { Context } from 'koa';
+import { NextCallback } from '../types/index';
+import { IComment } from '../entities/index';
+import { CommentService } from '../services/index';
 import * as Debug from 'debug';
-import { IComment } from "../entities/index";
-import { CommentService } from "../services/index";
 
 const debug = Debug('zzti-zhihu:controller:comment');
 

@@ -167,6 +167,8 @@ export class UserService {
         email: user.email,
         avatar: user.avatar,
         gender: user.gender,
+        hisFollowIds: user.hisFollowIds,
+        followHimIds: user.followHimIds,
         hisFollowUsers: user.hisFollowIds.map(h => _userEntity[h]),
         followHimUsers: user.followHimIds.map(f => _userEntity[f]),
         lastLoginTime: user.lastLoginTime,

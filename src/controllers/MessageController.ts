@@ -92,7 +92,8 @@ export class MessageController {
    * @param next next
    */
   public static async setIsLooked(ctx: Context, next: NextCallback): Promise<any> {
-
+    await MessageService.setMessageIsLooked(ctx.params.id);
+    ctx.body = RequestResultUtil.createSuccess();
   }
 
   /**
@@ -101,7 +102,8 @@ export class MessageController {
    * @param next next
    */
   public static async setUserAllMessageToIsLooked(ctx: Context, next: NextCallback): Promise<any> {
-
+    await MessageService.setAllMessagesIsLookedByUserId(ctx.state.currentUser.uid);
+    ctx.body = RequestResultUtil.createSuccess();
   }
 
   /**
@@ -110,7 +112,8 @@ export class MessageController {
    * @param next next
    */
   public static async remove(ctx: Context, next: NextCallback): Promise<any> {
-    return await MessageService.testDel();
+    await MessageService.removeMessage(ctx.params.id);
+    ctx.body = RequestResultUtil.createSuccess();
   }
 
   /**
@@ -119,7 +122,8 @@ export class MessageController {
    * @param next next
    */
   public static async removeUserAllMessages(ctx: Context, next: NextCallback): Promise<any> {
-
+    await MessageService.clearAllMessagesByUserId(ctx.state.currentUser.uid);
+    ctx.body = RequestResultUtil.createSuccess();
   }
 
 }

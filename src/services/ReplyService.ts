@@ -23,6 +23,7 @@ export class ReplyService {
    * @param questionId 问题id
    */
   public static async postReply(reply: IReply, userId: string, questionId: string): Promise<IServiceResult> {
+    debug('发布回复');
     let saveResult;
     try {
       saveResult = await new ReplyModel({
@@ -35,6 +36,7 @@ export class ReplyService {
       const user = userRes.success ? userRes.successResult : {};
       // 消息
       const messageQuestionUserId = new Message(MessageTypeEnum.USER_REPLY_MY_QUESTION, userId, question.userId, questionId);
+      debug('user: %O', user);
       const messagesFollowHim = userRes.successResult.followHimIds
         .map(_ => new Message(MessageTypeEnum.FOLLOWED_USER_CREATE_REPLY, userId, _, questionId));
       await MessageModel.create([...messagesFollowHim, messageQuestionUserId]);
@@ -48,6 +50,7 @@ export class ReplyService {
         user: user,
       });
     } catch (error) {
+      debug('error: ', error);
       return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
     }
   }

@@ -91,7 +91,7 @@ export class Message implements IMessage {
    */
   public constructor(type: MessageTypeEnum, createUserId: string, userId: string, link?: string, content?: string) {
     this.type = type;
-    this.createUserId = this.createUserId;
+    this.createUserId = createUserId;
     this.userId = userId;
     this.link = link;
     this.content = content;

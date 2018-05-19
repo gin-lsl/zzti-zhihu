@@ -61,6 +61,11 @@ export interface IQuestion {
    * 访问次数
    */
   lookCount: number;
+
+  /**
+   * 是否被置顶
+   */
+  isTop: boolean;
 }
 
 /**
@@ -81,6 +86,7 @@ export class Question implements IQuestion {
   saveUserIds: string[];
   isAnonymous: boolean;
   lookCount: number;
+  isTop: boolean;
 
   /**
    * 生成mongoose模式定义对象
@@ -98,6 +104,7 @@ export class Question implements IQuestion {
       saveUserIds: [String],
       isAnonymous: Boolean,
       lookCount: Number,
+      isTop: Boolean,
     };
   }
 }

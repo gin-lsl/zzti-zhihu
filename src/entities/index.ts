@@ -3,3 +3,4 @@ export * from './Question';
 export * from './User';
 export * from './Reply';
 export * from './Message';
+export * from './Admin';

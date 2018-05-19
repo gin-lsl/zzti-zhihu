@@ -7,6 +7,7 @@ import { esClient, DB, ES } from '../config';
 import * as Debug from 'debug';
 import { MessageService } from './MessageService';
 import { UserService } from '.';
+import { AdminModel } from '../models/Admin.model';
 
 const debug = Debug('zzti-zhihu:service:question');
 
@@ -29,7 +30,7 @@ export class QuestionService {
       saveResult = await new QuestionModel({ ...question, userId, createAt: new Date(), lookCount: 0 }).save();
       const user = await UserModel.findById(userId);
       const messages = user.followHimIds.map(_ => new Message(MessageTypeEnum.FOLLOWED_USER_CREATE_QUESTION, userId, _, saveResult.id));
-      await MessageModel.create(messages);
+      MessageModel.create(messages);
       return RequestResultUtil.createSuccess(saveResult.id);
     } catch (error) {
       return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
@@ -76,6 +77,50 @@ export class QuestionService {
   public static async cancelCollect(questionId: string, userId: string): Promise<void> {
     await UserModel.findByIdAndUpdate(userId, { $pull: { collectionQuestionIds: questionId } });
     await QuestionModel.findByIdAndUpdate(questionId, { $pull: { collectUserIds: userId } });
+  }
+
+  /**
+   * 置顶
+   *
+   * @param questionId 问题ID
+   * @param adminId 管理员ID
+   */
+  public static async topOrCancel(questionId: string, adminId: string, isTop: boolean): Promise<IServiceResult> {
+    debug('置顶问题');
+    const question = await QuestionModel.findById(questionId);
+    if (!question) {
+      return RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    const admin = await AdminModel.findById(adminId);
+    if (!admin) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
+    }
+    try {
+      question.isTop = isTop;
+      await question.save();
+      return RequestResultUtil.createSuccess();
+    } catch (error) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
+  }
+
+  public static async myTop(adminId: string): Promise<IServiceResult> {
+    debug('查找置顶的问题');
+    const admin = await AdminModel.findById(adminId);
+    if (!admin) {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNKNOWN_USER);
+    }
+    try {
+      const questions = await QuestionModel.find().where('isTop', true);
+      return RequestResultUtil.createSuccess(questions && questions.map(q => ({
+        id: q.id,
+        title: q.title,
+        description: q.description,
+        isTop: q.isTop,
+      })));
+    } catch {
+      return RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
+    }
   }
 
   /**
@@ -275,6 +320,7 @@ export class QuestionService {
       saveUserIds: q.saveUserIds,
       isAnonymous: q.isAnonymous,
       lookCount: q.lookCount,
+      isTop: q.isTop,
       user: q.isAnonymous ? {} : _userEntity[q.userId]
     }));
   }
@@ -361,7 +407,7 @@ export class QuestionService {
     const user = await UserModel.findById(userId);
     const promises = user.collectionQuestionIds.map(_ => QuestionModel.findById(_));
     const qs = await Promise.all(promises);
-    debug('qs: ', qs);
+    // debug('qs: ', qs);
     return qs.map(q => {
       if (!q) {
         return {
@@ -448,12 +494,14 @@ export class QuestionService {
         id: q._id,
         createAt: q._source['createAt'],
         title: q._source['title'],
+        isTop: q._source['isTop'],
         _highlight: q.highlight,
       })),
       byDescription: descriptionHints.map(q => ({
         id: q._id,
         createAt: q._source['createAt'],
         title: q._source['title'],
+        isTop: q._score['isTop'],
         description: q._source['description'],
         _highlight: q.highlight,
       })),

@@ -10,6 +10,6 @@ router.put('/looked', UserController.verifyJwt, MessageController.setUserAllMess
 router.put('/looked/:id', UserController.verifyJwt, MessageController.setIsLooked);
 
 router.del('/', UserController.verifyJwt, MessageController.removeUserAllMessages);
-router.del('/:id', MessageController.remove);
+router.del('/:id', UserController.verifyJwt, MessageController.remove);
 
 export default router;

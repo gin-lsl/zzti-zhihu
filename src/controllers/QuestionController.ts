@@ -65,6 +65,50 @@ export class QuestionController {
   }
 
   /**
+   * 置顶
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async top(ctx: Context, next: NextCallback): Promise<any> {
+    debug('置顶');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    ctx.body = await QuestionService.topOrCancel(id, uid, true);
+  }
+
+  /**
+   * 取消置顶
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async cancelTop(ctx: Context, next: NextCallback): Promise<any> {
+    debug('取消置顶');
+    const { id } = ctx.state.params;
+    const { uid } = ctx.state.currentUser;
+    if (!id) {
+      return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.CANNOT_FOUND_TARGET);
+    }
+    ctx.body = await QuestionService.topOrCancel(id, uid, false);
+  }
+
+  /**
+   * 获取所有置顶的问题
+   *
+   * @param ctx ctx
+   * @param next next
+   */
+  public static async myTop(ctx: Context, next: NextCallback): Promise<any> {
+    debug('我置顶的问题');
+    const { uid } = ctx.state.currentUser;
+    ctx.body = await QuestionService.myTop(uid);
+  }
+
+  /**
    * 对问题点赞
    *
    * @param ctx ctx

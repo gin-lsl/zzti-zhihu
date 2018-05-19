@@ -11,6 +11,7 @@ import { NextCallback } from '../types/index';
 import { UserProxy } from '../proxy/index';
 import { AppConfig } from '../config/index';
 import { QuestionService, ReplyService } from '../services/index';
+import { AdminModel } from '../models';
 
 const debug = Debug('zzti-zhihu:controller:user');
 
@@ -69,17 +70,23 @@ export class UserController {
   public static async signIn(ctx: Context, next: NextCallback): Promise<any> {
 
     debug('signIn');
-    const { email, password } = ctx.request.body;
+    const { email, password, isAdmin } = ctx.request.body as {
+      email: string;
+      password: string;
+      isAdmin: boolean;
+    };
     let _body;
     if ((email == null || email === '') || (password == null || password === '')) {
       return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR, '邮箱或密码不能为空');
     }
+
     try {
-      const loginRes = await UserService.signIn(email, password);
+      const loginRes = await UserService.signIn(email, password, isAdmin);
       if (loginRes.success) {
         const _result = loginRes.successResult;
         const access_token = await createJWT(JWTDTO.createJWTDTO(_result.id, _result.email, _result.username));
         _body = RequestResultUtil.createSuccess<any>({ ...loginRes.successResult, access_token });
+        debug('管理员登录结果: ', _body);
       } else {
         _body = loginRes;
       }

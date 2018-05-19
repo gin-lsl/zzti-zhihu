@@ -10,6 +10,11 @@ router.all('/error', async (ctx, next) => {
   return ctx.body = RequestResultUtil.createError(ErrorCodeEnum.UNDEFINED_ERROR);
 });
 
+// ADMIN Work
+router.put('/top/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.top);
+router.put('/cancel-top/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.cancelTop);
+router.get('/top', UserController.verifyJwt, QuestionController.myTop);
+
 router.get('/relate', QuestionController.moreLikeThis);
 router.get('/collect/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.collect);
 router.get('/cancel-collect/:id', verifyObjectIdMiddleware, UserController.verifyJwt, QuestionController.cancelCollect);
@@ -24,5 +29,8 @@ router.get('/:id', verifyObjectIdMiddleware, QuestionController.getById);
 router.get('/', QuestionController.getMany);
 
 router.post('/post', UserController.verifyJwt, QuestionController.postTopic);
+
+// router.put('/hidden/:id', verifyObjectIdMiddleware, UserController.verifyJwt);
+// router.put('/cancel-hidden/:id', verifyObjectIdMiddleware, UserController.verifyJwt);
 
 export default router;

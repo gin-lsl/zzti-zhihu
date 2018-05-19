@@ -20,6 +20,7 @@ export class MessageController {
    * @param next next
    */
   public static async getUserAllMessages(ctx: Context, next: NextCallback): Promise<any> {
+    debug('获取用户消息');
     const currUser = ctx.state.currentUser;
     const userId = currUser.uid;
     const messages = await MessageService.getMessagesByUserId(userId);
@@ -32,58 +33,65 @@ export class MessageController {
     });
 
     const results: Message[] = messages.map(m => {
+      const resultMessage: Message = {
+        id: m.id, createAt: m.createAt,
+        createUserId: m.createUserId,
+        isLooked: m.isLooked, type: m.type,
+        userId: m.userId
+      };
       switch (m.type) {
         case MessageTypeEnum.FOLLOWED_USER_CREATE_QUESTION:
           return {
-            ...m,
+            ...resultMessage,
             content: '你关注的用户 @' + userEntity[m.createUserId].username + ' 创建了一个问题',
             link: '/question/' + m.link
           };
         case MessageTypeEnum.FOLLOWED_USER_CREATE_REPLY:
           return {
-            ...m,
+            ...resultMessage,
             content: `你关注的用户 @${userEntity[m.createUserId].username} 回答了问题`,
             link: '/question/' + m.link,
           };
         case MessageTypeEnum.USER_COMMENT_MY_REPLY:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 在你的回复中有新的评论`,
             link: `/question/${m.link}`,
           };
         case MessageTypeEnum.USER_FOLLOW_ME:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 关注了你`,
             link: `/user/${m.createUserId}`,
           };
         case MessageTypeEnum.USER_LIKE_MY_QUESTION:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 收藏了你的问题`,
             link: `/question/${m.link}`,
           };
         case MessageTypeEnum.USER_REPLY_MY_QUESTION:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 回复了你的问题`,
             link: `/question/${m.link}`,
           };
         case MessageTypeEnum.USER_UP_MY_QUESTION:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 给你的问题点了赞`,
             link: `/question/${m.link}`,
           };
         case MessageTypeEnum.USER_UP_MY_REPLY:
           return {
-            ...m,
+            ...resultMessage,
             content: `@${userEntity[m.createUserId].username} 给你的评论点了赞`,
             link: `/question/${m.link}`,
           };
       }
     });
-    return RequestResultUtil.createSuccess(results);
+    debug('消息: ', results);
+    ctx.body = RequestResultUtil.createSuccess(results);
   }
 
   /**

@@ -1,5 +1,5 @@
 import * as Debug from 'debug';
-import { UserModel } from '../models/index';
+import { UserModel, AdminModel } from '../models/index';
 import { UserProxy } from '../proxy/index';
 import { IUserDocument } from '../schemas/IUserDocument';
 import { IServiceResult } from '../interfaces/index';
@@ -19,16 +19,31 @@ export class UserService {
    * @param email 邮箱
    * @param password 密码
    */
-  public static async signIn(email: string, password: string): Promise<IServiceResult<UserDTO>> {
+  public static async signIn(email: string, password: string, isAdmin: boolean = false): Promise<IServiceResult<UserDTO>> {
     debug('signIn -> email: %s, password: %s', email, password);
     if (!(email && password)) {
       return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
     }
-    const findOneUser = await UserProxy.findByEmailAndPassword(email, password);
-    if (findOneUser) {
-      return RequestResultUtil.createSuccess<UserDTO>({ id: findOneUser.id, email: findOneUser.email, username: findOneUser.username });
+    // 判断身份
+    if (isAdmin) {
+      const findOneAdmin = await AdminModel.findOne({ email, password });
+      if (findOneAdmin) {
+        debug('管理员ID: %O', findOneAdmin);
+        return RequestResultUtil.createSuccess({
+          id: findOneAdmin.id || findOneAdmin._id,
+          email: findOneAdmin.email,
+          username: findOneAdmin.username,
+          isAdmin: true,
+        });
+      }
+      return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
+    } else {
+      const findOneUser = await UserProxy.findByEmailAndPassword(email, password);
+      if (findOneUser) {
+        return RequestResultUtil.createSuccess<UserDTO>({ id: findOneUser.id, email: findOneUser.email, username: findOneUser.username });
+      }
+      return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
     }
-    return RequestResultUtil.createError(ErrorCodeEnum.LOGIN_ERROR__EMAIL_OR_PASSWORD_ERROR);
   }
 
   /**

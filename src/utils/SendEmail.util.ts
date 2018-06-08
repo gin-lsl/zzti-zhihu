@@ -39,8 +39,9 @@ export function sendActiveMail(who: string, accessToken: string, name: string): 
   const subject = SiteConfig.siteName + ' - 账户激活';
   const html = `<p>您好，${name}，</p>
                 <p>我们收到您在 ${SiteConfig.siteName} 的注册请求。请点击下面的链接来激活账号：</p>
-                <a href="${SiteConfig.siteUrl}/active-account?key=${accessToken}&name=${name}>激活链接</a>
+                ${SiteConfig.siteUrl}/active-account?key=${accessToken}&name=${name}
                 <p>若您没有在 ${SiteConfig.siteName} 填写过注册信息，可能是他人滥用或者错误使用了您的电子邮箱，请忽略或直接删除此邮件即可，我们对您造成的打扰深感抱歉。</p>
                 <p>${SiteConfig.siteName} 谨上。</p>`;
+  debug('html: ', html);
   sendMail({ from, to, subject, html, cc });
 }
